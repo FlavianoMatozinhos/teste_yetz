@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guilds', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->unsignedInteger(column: 'max_players');
-            $table->unsignedInteger(column: 'min_players');
-            $table->unsignedBigInteger('creator_id');
+            $table->string('name')->unique();
             $table->timestamps();
-
-            $table->foreign('creator_id')->references('id')->on('users');
-        });        
+        });
     }
 
     /**
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guilds');
+        Schema::dropIfExists('roles');
     }
 };

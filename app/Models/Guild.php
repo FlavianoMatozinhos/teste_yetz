@@ -8,11 +8,10 @@ class Guild extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'max_players'];
+    protected $fillable = ['name', 'max_players', 'min_players', 'creator_id'];
 
     public function players()
     {
         return $this->hasMany(Player::class);
     }
 }
-
