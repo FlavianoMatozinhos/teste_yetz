@@ -14,4 +14,14 @@ class Guild extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function hasClass($className)
+    {
+        // Verifica se existe algum jogador na guilda com a classe especificada
+        return $this->players()
+                    ->whereHas('class', function ($query) use ($className) {
+                        $query->where('name', $className);
+                    })
+                    ->exists();
+    }
 }

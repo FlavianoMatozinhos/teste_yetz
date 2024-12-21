@@ -5,9 +5,24 @@
 <div class="container mt-5">
     <h2>Home</h2>
 
+    <!-- Alerta de sucesso -->
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- Alerta de erro -->
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Alerta de aviso (Warning) -->
+    @if (session('warning'))
+        <div class="alert alert-warning">
+            {{ session('warning') }}
         </div>
     @endif
 
@@ -17,25 +32,13 @@
             @csrf
             <label for="num_guildas">Número de Guildas:</label>
             <select name="num_guildas" id="num_guildas">
-                <option value="1">1 Guilda</option>
-                <option value="2">2 Guildas</option>
-                <option value="3">3 Guildas</option>
+                @for ($i = 1; $i <= $numGuildas; $i++)
+                    <option value="{{ $i }}">{{ $i }} Guilda{{ $i > 1 ? 's' : '' }}</option>
+                @endfor
             </select>
-        
+            
             <button type="submit">Balancear</button>
-        </form>        
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
+        </form>      
     @endif
 
     <!-- Layout com as tabelas lado a lado -->
@@ -73,6 +76,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
+                        <th>Classe</th>
                         <th>Guilda</th>
                     </tr>
                 </thead>
@@ -81,6 +85,7 @@
                         <tr>
                             <td>{{ $player->id }}</td>
                             <td>{{ $player->name }}</td>
+                            <td>{{ $player->class ? $player->class->name : 'Sem Classe' }}</td>
                             <td>{{ $player->guild ? $player->guild->name : 'Sem Guilda' }}</td>
                         </tr>
                     @endforeach

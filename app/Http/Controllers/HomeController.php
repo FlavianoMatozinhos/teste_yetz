@@ -17,7 +17,8 @@ class HomeController extends Controller
         $data = [
             'message' => 'Bem-vindo à Home!',
             'guids' => Guild::all(),  // Pega todas as guildas
-            'players' => User::all(),  // Pega todos os jogadores
+            'players' => User::all(),
+            'numGuildas' => Guild::count(), // Pega todos os jogadores
         ];
     
         return view('home', $data);

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\ClassModel;
+use App\Models\Classe;
 
 class ClassSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class ClassSeeder extends Seeder
         ];
 
         foreach ($classes as $class) {
-            ClassModel::create($class);
+            Classe::create($class);
         }
     }
 }

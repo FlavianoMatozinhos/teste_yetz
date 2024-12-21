@@ -22,4 +22,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Guild::class);
     }
+
+    public function class()
+    {
+        return $this->belongsTo(Classe::class, 'class_id');
+    }
 }

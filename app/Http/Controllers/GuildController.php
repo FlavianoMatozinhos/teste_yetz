@@ -34,98 +34,136 @@ class GuildController extends Controller
             return redirect()->back()->with('error', 'Não é possível balancear com menos de 2 guildas.');
         }
     
-        $players = User::all()->sortByDesc('xp');  // Pega todos os jogadores e ordena por XP de forma decrescente
+        $players = User::all();  // Pega todos os jogadores
         $playersPerGuild = ceil(count($players) / $numGuildas);  // Calcula quantos jogadores por guilda
     
-        // Inicializa um array para controlar o total de XP em cada guilda
-        $guildXpTotals = array_fill(0, $numGuildas, 0);
-        // Inicializa um array para contar o número de jogadores por guilda
-        $guildPlayerCounts = array_fill(0, $numGuildas, 0);
+        // Inicializa um array para controlar o número de jogadores em cada guilda
+        $guildPlayerCounts = array_fill(0, count($guilds), 0);
     
-        // Inicializa um array para armazenar os jogadores alocados
+        // Ordena os jogadores por XP (do maior para o menor)
+        $players = $players->sortByDesc('xp');
+    
+        // Inicializa um array para armazenar as alocações dos jogadores
         $playerAllocations = [];
     
-        // Distribuindo os jogadores nas guildas de acordo com o XP
+        // Inicializa variáveis de alerta para as classes
+        $missingClassesWarning = false;
+    
+        // Distribui os jogadores entre as guildas balanceando o XP
         foreach ($players as $player) {
-            // Tenta alocar o jogador para a guilda com o menor total de XP, respeitando min e max
-            $guildIndex = $this->findSuitableGuild($guildXpTotals, $guildPlayerCounts, $guilds, $numGuildas);
+            // Encontrar a guilda com o menor total de XP
+            $guildIndex = $this->findGuildWithLeastXP($guildPlayerCounts, $guilds, $player);
     
             if ($guildIndex === null) {
                 return redirect()->back()->with('error', 'Não é possível balancear os jogadores respeitando as restrições de tamanho de guilda.');
             }
     
-            $guild = $guilds[$guildIndex];  // Pega a guilda com o menor total de XP e que ainda tem espaço
-            $player->guild_id = $guild->id;  // Atualiza a guilda do jogador no banco de dados
-            $player->save();  // Salva as alterações no banco
+            $guild = $guilds[$guildIndex];  // Pega a guilda com menor XP
+            $player->guild_id = $guild->id;  // Atualiza a guilda do jogador
+            $player->save();  // Salva a alteração no banco de dados
     
-            // Atualiza o total de XP da guilda e o número de jogadores
-            $guildXpTotals[$guildIndex] += $player->xp;
+            // Atualiza o número de jogadores na guilda
             $guildPlayerCounts[$guildIndex]++;
     
             // Armazena a alocação do jogador
             $playerAllocations[] = ['player_id' => $player->id, 'guild_id' => $guild->id];
+    
+            // Verifica se a guilda tem pelo menos um Clérigo, Guerreiro e Mago ou Arqueiro
+            $this->checkGuildClasses($guild, $playerAllocations, $missingClassesWarning);
         }
     
-        // Agora verifica se as guildas respeitam as restrições min/max de jogadores
-        $this->adjustGuilds($guilds, $guildPlayerCounts);
+        // Verifica se todas as guildas respeitam as restrições de jogadores mínimos e máximos
+        try {
+            $this->checkGuildSizes($guilds, $guildPlayerCounts);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     
-        return redirect()->back()->with('status', 'Guildas balanceadas com sucesso!');
+        // Exibe um warning se faltar alguma classe
+        if ($missingClassesWarning) {
+            return redirect()->back()->with('warning', 'Guildas balanceadas com sucesso! Algumas guildas não possuem uma formação ideal de classes (Clérigo, Guerreiro, Mago ou Arqueiro).');
+        }
+    
+        // Sucesso ao balancear
+        return redirect()->back()->with('success', 'Guildas balanceadas com sucesso!');
     }
     
-    private function findSuitableGuild($guildXpTotals, $guildPlayerCounts, $guilds, $numGuildas)
+    private function findGuildWithLeastXP($guildPlayerCounts, $guilds, $player)
     {
-        // Vamos primeiro verificar as guildas que têm espaço para mais jogadores
-        $validGuilds = [];
+        // Inicializa o array de total de XP por guilda
+        $guildXP = [];
     
+        // Calcula o total de XP de cada guilda
         foreach ($guilds as $index => $guild) {
-            $minPlayers = $guild->min_players;
-            $maxPlayers = $guild->max_players;
-            $currentPlayerCount = $guildPlayerCounts[$index];
+            $guildXP[$index] = $this->calculateTotalXPForGuild($guild);
+        }
     
-            // A guilda deve ter espaço suficiente para mais jogadores e respeitar o limite
-            if ($currentPlayerCount < $maxPlayers) {
-                $validGuilds[] = $index;  // Adiciona a guilda aos candidatos
+        // Encontra a guilda com o menor total de XP
+        asort($guildXP);
+        foreach ($guildXP as $index => $xp) {
+            $guild = $guilds[$index];  // Pega a guilda com menor total de XP
+    
+            // Verifica se a guilda tem espaço
+            if ($guildPlayerCounts[$index] < $guild->max_players) {
+                return $index;  // Retorna o índice da guilda com menor XP e espaço disponível
             }
         }
     
-        if (empty($validGuilds)) {
-            return null;  // Se não houver guildas com espaço disponível, retorna null
-        }
+        return null;  // Retorna null se não houver guildas com espaço disponível
+    }
     
-        // Agora entre as guildas válidas, escolhemos a que tem o menor total de XP
-        $lowestXpGuildIndex = null;
-        $lowestXpTotal = PHP_INT_MAX;
-    
-        foreach ($validGuilds as $index) {
-            if ($guildXpTotals[$index] < $lowestXpTotal) {
-                $lowestXpTotal = $guildXpTotals[$index];
-                $lowestXpGuildIndex = $index;
-            }
-        }
-    
-        return $lowestXpGuildIndex;  // Retorna a guilda com o menor total de XP
-    }    
-    
-    private function adjustGuilds($guilds, $guildPlayerCounts)
+    private function calculateTotalXPForGuild($guild)
     {
-        foreach ($guilds as $index => $guild) {
-            $minPlayers = $guild->min_players;
-            $maxPlayers = $guild->max_players;
-            $currentPlayerCount = $guildPlayerCounts[$index];
-
-            // Verifica se a guilda tem jogadores abaixo do mínimo ou acima do máximo
-            if ($currentPlayerCount < $minPlayers) {
-                \Log::error("A guilda {$guild->name} tem {$currentPlayerCount} jogadores, que é menor que o mínimo de {$minPlayers}.");
-                throw new \Exception("A guilda {$guild->name} tem menos jogadores do que o mínimo necessário.");
-            }
+        // Calcula o total de XP de todos os jogadores na guilda
+        $players = User::where('guild_id', $guild->id)->get();
+        $totalXP = $players->sum('xp');
+        
+        return $totalXP;
+    }
     
-            if ($currentPlayerCount > $maxPlayers) {
-                \Log::error("A guilda {$guild->name} tem {$currentPlayerCount} jogadores, que é maior que o máximo de {$maxPlayers}.");
-                throw new \Exception("A guilda {$guild->name} tem mais jogadores do que o máximo permitido.");
+    private function checkGuildSizes($guilds, $guildPlayerCounts)
+    {
+        // Verifica se todas as guildas têm o número mínimo de jogadores
+        foreach ($guilds as $index => $guild) {
+            $count = $guildPlayerCounts[$index];
+    
+            if ($count < $guild->min_players) {
+                // Se uma guilda não atingir o mínimo de jogadores, exibe um erro
+                throw new \Exception("A guilda {$guild->name} não tem jogadores suficientes.");
             }
         }
     }
-
+    
+    private function checkGuildClasses($guild, $playerAllocations, &$missingClassesWarning)
+    {
+        // Inicializa contadores para as classes
+        $clericCount = 0;
+        $warriorCount = 0;
+        $mageCount = 0;
+        $archerCount = 0;
+    
+        // Conta os jogadores de cada classe alocados à guilda
+        foreach ($playerAllocations as $allocation) {
+            if ($allocation['guild_id'] == $guild->id) {
+                $player = User::find($allocation['player_id']);
+                if ($player->class == 'Clérigo') {
+                    $clericCount++;
+                } elseif ($player->class == 'Guerreiro') {
+                    $warriorCount++;
+                } elseif ($player->class == 'Mago') {
+                    $mageCount++;
+                } elseif ($player->class == 'Arqueiro') {
+                    $archerCount++;
+                }
+            }
+        }
+    
+        // Verifica se todas as classes estão representadas
+        if ($clericCount < 1 || $warriorCount < 1 || ($mageCount < 1 && $archerCount < 1)) {
+            $missingClassesWarning = true;
+        }
+    }
+    
     // Lista todas as guildas
     public function index()
     {

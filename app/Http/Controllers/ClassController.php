@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ClassModel;
+use App\Models\Classe;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Exception;
@@ -14,7 +14,7 @@ class ClassController extends Controller
     public function index()
     {
         try {
-            $classes = ClassModel::all();
+            $classes = Classe::all();
             return response()->json($classes, 200);
         } catch (Exception $e) {
             return response()->json([
@@ -34,7 +34,7 @@ class ClassController extends Controller
                 // Adicione outras validações aqui, se necessário
             ]);
 
-            $class = ClassModel::create($request->all());
+            $class = Classe::create($request->all());
             return response()->json($class, 201); // Created
         } catch (ValidationException $e) {
             return response()->json([
@@ -53,7 +53,7 @@ class ClassController extends Controller
     public function show($id)
     {
         try {
-            $class = ClassModel::findOrFail($id);
+            $class = Classe::findOrFail($id);
             return response()->json($class, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
@@ -72,7 +72,7 @@ class ClassController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $class = ClassModel::findOrFail($id);
+            $class = Classe::findOrFail($id);
 
             // Validação dos dados antes de atualizar
             $request->validate([
@@ -104,7 +104,7 @@ class ClassController extends Controller
     public function destroy($id)
     {
         try {
-            $class = ClassModel::findOrFail($id);
+            $class = Classe::findOrFail($id);
             $class->delete();
             return response()->json(null, 204); // No Content
         } catch (ModelNotFoundException $e) {

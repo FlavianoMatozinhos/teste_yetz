@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ClassModel;
+use App\Models\Classe;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,7 @@ class RegisterController extends Controller
     public function index() 
     {
         // Buscar todas as classes disponíveis
-        $classes = ClassModel::all(); // Adaptar para a tabela de classes no seu banco de dados
+        $classes = Classe::all(); // Adaptar para a tabela de classes no seu banco de dados
 
         // Passar a variável $classes para a view
         return view("auth.register", compact('classes'));
