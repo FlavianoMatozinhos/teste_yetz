@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Guild;
+use App\Models\User;
 
 class GuildRepository
 {
@@ -11,9 +12,14 @@ class GuildRepository
         return Guild::all();
     }
 
-    public function createGuild(array $data)
+    public function getAllPlayers()
     {
-        return Guild::create($data);
+        return User::all();
+    }
+
+    public function getPlayersInGuild($guildId)
+    {
+        return User::where('guild_id', $guildId)->get();
     }
 
     public function findGuildById($id)
@@ -21,8 +27,14 @@ class GuildRepository
         return Guild::findOrFail($id);
     }
 
-    public function deleteGuild($id)
+    public function createGuild($data)
     {
-        return Guild::findOrFail($id)->delete();
+        return Guild::create($data);
+    }
+
+    public function deleteGuild($guild)
+    {
+        $guild->delete();
     }
 }
+
