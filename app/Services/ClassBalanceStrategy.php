@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Player;
+use App\Models\User;
 use App\Repositories\PlayerRepository;
 
 class ClassBalanceStrategy

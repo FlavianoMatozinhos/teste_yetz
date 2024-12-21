@@ -13,10 +13,29 @@
 
     @if (Auth::user()->role_id === 1)  <!-- Verifica se o usuário é o mestre -->
         <a href="{{ route('guild.create') }}" class="btn btn-success mb-3">Criar Guilda</a>
-        <form action="{{ route('balance') }}" method="POST">
+        <form method="POST" action="{{ route('balance') }}">
             @csrf
-            <button type="submit" class="btn btn-success mb-3">Balancear Guildas</button>
-        </form>
+            <label for="num_guildas">Número de Guildas:</label>
+            <select name="num_guildas" id="num_guildas">
+                <option value="1">1 Guilda</option>
+                <option value="2">2 Guildas</option>
+                <option value="3">3 Guildas</option>
+            </select>
+        
+            <button type="submit">Balancear</button>
+        </form>        
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('status'))
+        <div class="alert alert-success">
+            {{ session('status') }}
+        </div>
     @endif
 
     <!-- Layout com as tabelas lado a lado -->
