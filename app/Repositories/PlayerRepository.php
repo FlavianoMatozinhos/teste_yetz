@@ -16,6 +16,19 @@ class PlayerRepository
         return User::where('class_id', $classId)->get();
     }
 
+    public function getAllPlayers()
+    {
+        return User::all();
+    }
+    
+    public function getAllWithConfirmationStatus()
+    {
+        return User::all()->map(function ($player) {
+            $player->confirmed = $player->confirmed ? 'Sim' : 'Não';
+            return $player;
+        });
+    }
+
     public function getPlayersByXP()
     {
         return User::orderBy('xp', 'desc')->get();

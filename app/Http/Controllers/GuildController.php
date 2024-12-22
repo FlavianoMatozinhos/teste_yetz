@@ -6,6 +6,7 @@ use App\Repositories\GuildRepository;
 use App\Services\GuildBalancerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class GuildController extends Controller
 {
@@ -49,11 +50,11 @@ class GuildController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'min_players' => 'required|integer|min:1',
-                'max_players' => 'required|integer|min:1',
+                'max_players' => 'required|integer|min:1|gte:min_players',
             ]);
     
             // Criando a guilda
-            $this->guildRepository->createGuild([
+            $guild = $this->guildRepository->createGuild([
                 'name' => $request->input('name'),
                 'min_players' => $request->input('min_players'),
                 'max_players' => $request->input('max_players'),
@@ -67,7 +68,6 @@ class GuildController extends Controller
             return redirect()->route('guild.create')->with('error', 'Erro ao criar guilda: ' . $e->getMessage());
         }
     }
-    
 
     public function show($id)
     {

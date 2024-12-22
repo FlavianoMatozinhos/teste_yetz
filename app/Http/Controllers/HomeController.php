@@ -2,39 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Guild;
+use App\Services\GuildBalancerService;
+use App\Repositories\GuildRepository;
+use App\Repositories\PlayerRepository;
 use Illuminate\Http\Request;
-use App\Models\User;
 
 class HomeController extends Controller
 {
+    protected $guildRepository;
+    protected $playerRepository;
+    protected $guildBalancerService;
+
+    public function __construct(GuildRepository $guildRepository, PlayerRepository $playerRepository, GuildBalancerService $guildBalancerService)
+    {
+        $this->guildRepository = $guildRepository;
+        $this->playerRepository = $playerRepository;
+        $this->guildBalancerService = $guildBalancerService;
+    }
+
     public function index()
     {
-
-        $players = User::all()->map(function ($player) {
-            $player->confirmed = $player->confirmed ? 'Sim' : 'Não';
-            return $player;
-        });
-
-        $guilds = Guild::all()->map(function ($guild) {
-            if ($guild->players->isEmpty()) {
-                $guild->confirmation_status = 'Sem Players';
-            } else {
-                $allConfirmed = $guild->players->every(function ($player) {
-                    return $player->confirmed == 1;
-                });
-                $guild->confirmation_status = $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
-            }
-            return $guild;
-        });
+        $guilds = $this->guildRepository->getAllWithConfirmationStatus();
+        $players = $this->playerRepository->getAllWithConfirmationStatus();
 
         $data = [
             'message' => 'Bem-vindo à Home!',
-            'guids' => $guilds,
+            'guilds' => $guilds,
             'players' => $players,
-            'numGuildas' => Guild::count(),
+            'numGuildas' => $this->guildRepository->countGuilds(),
         ];
-    
+
         return view('home', $data);
     }
 }

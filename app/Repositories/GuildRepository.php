@@ -12,19 +12,42 @@ class GuildRepository
         return Guild::all();
     }
 
+    public function getAllWithPlayers()
+    {
+        return Guild::with('players')->get();
+    }
+
     public function getAllPlayers()
     {
-        return User::where('confirmed', 1)->get();
+        return User::all(); // Ou outro modelo apropriado para representar os jogadores
     }
 
-    public function getPlayersInGuild($guildId)
+    public function getAllWithConfirmationStatus()
     {
-        return User::where('guild_id', $guildId)->get();
+        return Guild::with('players')
+            ->get()
+            ->map(function ($guild) {
+                $guild->confirmation_status = $this->getGuildConfirmationStatus($guild);
+                return $guild;
+            });
     }
 
-    public function findGuildById($id)
+    public function getGuildConfirmationStatus($guild)
     {
-        return Guild::findOrFail($id);
+        if ($guild->players->isEmpty()) {
+            return 'Sem Players';
+        }
+
+        $allConfirmed = $guild->players->every(function ($player) {
+            return $player->confirmed == 1;
+        });
+
+        return $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
+    }
+
+    public function countGuilds()
+    {
+        return Guild::count();
     }
 
     public function createGuild($data)
@@ -37,4 +60,3 @@ class GuildRepository
         $guild->delete();
     }
 }
-

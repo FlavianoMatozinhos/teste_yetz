@@ -45,7 +45,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($guids as $guild)
+                    @foreach ($guilds as $guild)
                         <tr>
                             <td>{{ $guild->id }}</td>
                             <td>{{ $guild->name }}</td>
