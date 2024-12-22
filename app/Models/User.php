@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;  // Adicionando o trait do Passport
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens;  // Adicionando o trait HasApiTokens
+    use Notifiable, HasApiTokens;
 
     protected $fillable = [
         'name', 'email', 'password', 'role_id', 'class_id', 'xp', 'guild_id', 'confirmed',

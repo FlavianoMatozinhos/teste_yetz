@@ -18,9 +18,8 @@ class LoginService
     /**
      * Realiza o login do usuário.
      */
-    public function login(array $credentials)
+    public function login(array $credentials): array
     {
-        // Validação básica
         $validator = validator($credentials, [
             'email' => 'required|email',
             'password' => 'required|string',
@@ -34,7 +33,6 @@ class LoginService
             ];
         }
 
-        // Busca o usuário pelo email
         $user = $this->userRepository->findByEmail($credentials['email']);
 
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
@@ -44,7 +42,6 @@ class LoginService
             ];
         }
 
-        // Gera o token e autentica o usuário
         $tokenResult = $user->createToken('MyApp');
         $token = $tokenResult->accessToken;
 

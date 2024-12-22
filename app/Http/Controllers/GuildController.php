@@ -46,24 +46,19 @@ class GuildController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validando os dados de entrada
             $request->validate([
                 'name' => 'required|string|max:255|unique:guilds,name',
                 'min_players' => 'required|integer|min:1',
                 'max_players' => 'required|integer|min:1|gte:min_players',
             ]);
     
-            // Criando a guilda com o creator_id
             $guildData = $request->only(['name', 'min_players', 'max_players']);
-            $guildData['creator_id'] = Auth::id(); // Adicionando o ID do criador
-    
-            // Criando a guilda
-            $guild = $this->guildRepository->createGuild($guildData);
-    
-            // Redirecionando com mensagem de sucesso
+            $guildData['creator_id'] = Auth::id();
+
+            $this->guildRepository->createGuild($guildData);
+
             return redirect()->route('home')->with('success', 'Guilda criada com sucesso!');
         } catch (Exception $e) {
-            // Em caso de erro, redireciona com a mensagem de erro
             return redirect()->route('guild.create')->with('error', 'Erro ao criar guilda: ' . $e->getMessage());
         }
     }

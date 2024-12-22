@@ -12,7 +12,7 @@ class GuildBalancerService
     public function balanceGuilds($guilds, $players)
     {
         try {
-            $players = $players->sortByDesc('xp'); // Ordena por XP em ordem decrescente
+            $players = $players->sortByDesc('xp');
 
             $playerAllocations = [];
             $guildPlayerCounts = array_fill(0, count($guilds), 0);
@@ -21,7 +21,7 @@ class GuildBalancerService
                 $guildIndex = $this->findGuildWithLeastXP($guildPlayerCounts, $guilds, $player);
 
                 if ($guildIndex === null) {
-                    continue; // Se nenhuma guilda estiver disponível, o jogador não será alocado
+                    continue;
                 }
 
                 $guild = $guilds[$guildIndex];
@@ -33,7 +33,7 @@ class GuildBalancerService
                 $playerAllocations[] = ['player_id' => $player->id, 'guild_id' => $guild->id];
             }
 
-            return false; // Não haverá mais warning para classes ausentes
+            return false;
         } catch (Exception $e) {
             Log::error('Erro no balanceamento de guildas: ' . $e->getMessage());
             throw $e;

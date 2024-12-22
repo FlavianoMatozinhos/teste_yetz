@@ -16,6 +16,6 @@ class GuildServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // Outras lógicas de boot, caso necessário
+        //
     }
 }

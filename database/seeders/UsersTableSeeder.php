@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
-use App\Models\Classe;  // Assumindo que a tabela 'classes' esteja associada ao modelo 'Class'
+use App\Models\Classe;
 use App\Models\Guild;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,7 +13,6 @@ class UsersTableSeeder extends Seeder
 {
     public function run()
     {
-        // Cria roles e classes fictícias, caso não existam
         $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
         $roleUser = Role::firstOrCreate(['name' => 'user']);
 
@@ -22,17 +21,15 @@ class UsersTableSeeder extends Seeder
         $classArqueiro = Classe::firstOrCreate(['name' => 'Arqueiro']);
         $classClerigo = Classe::firstOrCreate(['name' => 'Clérigo']);
 
-        // Cria guildas fictícias, caso não existam
         $guild1 = Guild::firstOrCreate(['name' => 'Guilda A', 'max_players' => 3, 'min_players' => 0, 'creator_id' => 7]);
         $guild2 = Guild::firstOrCreate(['name' => 'Guilda B', 'max_players' => 1, 'min_players' => 1, 'creator_id' => 7]);
         $guild3 = Guild::firstOrCreate(['name' => 'Guilda C', 'max_players' => 0, 'min_players' => 0, 'creator_id' => 7]);
 
-        // Cria usuários fictícios
         $users = [
             [
                 'name' => 'Jogador 1',
                 'email' => 'jogador1@example.com',
-                'password' => Hash::make('password123'),  // Senha criptografada
+                'password' => Hash::make('password123'),
                 'role_id' => $roleAdmin->id,
                 'class_id' => $classGuerreiro->id,
                 'xp' => 10,
@@ -87,11 +84,10 @@ class UsersTableSeeder extends Seeder
                 'class_id' => $classMago->id,
                 'xp' => 7,
                 'guild_id' => $guild3->id,
-                'confirmed' => 0  // Não confirmado
+                'confirmed' => 0
             ]
         ];
 
-        // Inserir os dados dos usuários no banco de dados
         foreach ($users as $user) {
             User::create($user);
         }
