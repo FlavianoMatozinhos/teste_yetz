@@ -2,22 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Services\LogoutService;
 use Illuminate\Http\Request;
 
 class LogoutController extends Controller
 {
+    protected $logoutService;
+
+    public function __construct(LogoutService $logoutService)
+    {
+        $this->logoutService = $logoutService;
+    }
+
+    /**
+     * Realiza o logout do usuário.
+     */
     public function logout(Request $request)
     {
-        // Revogar o token de autenticação
-        $request->user()->tokens->each(function ($token) {
-            $token->delete();
-        });
-    
-        // Encerrar a sessão
-        auth()->logout();
-    
-        // Redirecionar para a página de login com uma mensagem de sucesso
+        $result = $this->logoutService->logoutUser($request->user());
+
+        if ($result['status'] === 'error') {
+            return redirect()->back()->withErrors(['error' => $result['message']]);
+        }
+
         return redirect()->route('login')->with('success', 'Você saiu com sucesso.');
     }
 }

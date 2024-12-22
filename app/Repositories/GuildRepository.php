@@ -4,25 +4,46 @@ namespace App\Repositories;
 
 use App\Models\Guild;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class GuildRepository
 {
-    public function getAllGuilds()
+    /**
+     * Retorna todas as guildas.
+     *
+     * @return Collection
+     */
+    public function getAllGuilds(): Collection
     {
         return Guild::all();
     }
 
-    public function getAllWithPlayers()
+    /**
+     * Retorna todas as guildas com os jogadores associados.
+     *
+     * @return Collection
+     */
+    public function getAllWithPlayers(): Collection
     {
         return Guild::with('players')->get();
     }
 
-    public function getAllPlayers()
+    /**
+     * Retorna todos os jogadores.
+     *
+     * @return Collection
+     */
+    public function getAllPlayers(): Collection
     {
         return User::all(); // Ou outro modelo apropriado para representar os jogadores
     }
 
-    public function getAllWithConfirmationStatus()
+    /**
+     * Retorna todas as guildas com os jogadores e seu status de confirmação.
+     *
+     * @return Collection
+     */
+    public function getAllWithConfirmationStatus(): Collection
     {
         return Guild::with('players')
             ->get()
@@ -32,7 +53,13 @@ class GuildRepository
             });
     }
 
-    public function getGuildConfirmationStatus($guild)
+    /**
+     * Obtém o status de confirmação de uma guilda.
+     *
+     * @param Guild $guild
+     * @return string
+     */
+    public function getGuildConfirmationStatus(Guild $guild): string
     {
         if ($guild->players->isEmpty()) {
             return 'Sem Players';
@@ -45,18 +72,46 @@ class GuildRepository
         return $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
     }
 
-    public function countGuilds()
+    /**
+     * Conta o número de guildas.
+     *
+     * @return int
+     */
+    public function countGuilds(): int
     {
         return Guild::count();
     }
 
-    public function createGuild($data)
+    /**
+     * Cria uma nova guilda.
+     *
+     * @param array $data
+     * @return Guild
+     */
+    public function createGuild(array $data): Guild
     {
         return Guild::create($data);
     }
 
-    public function deleteGuild($guild)
+    /**
+     * Exclui uma guilda.
+     *
+     * @param Guild $guild
+     * @return void
+     */
+    public function deleteGuild(Guild $guild): void
     {
         $guild->delete();
+    }
+
+    /**
+     * Encontra uma guilda pelo seu ID.
+     *
+     * @param int $id
+     * @return Guild
+     */
+    public function findGuildById(int $id): ?Guild
+    {
+        return Guild::find($id);
     }
 }
