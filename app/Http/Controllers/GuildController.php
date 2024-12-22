@@ -18,22 +18,20 @@ class GuildController extends Controller
         $this->guildBalancerService = $guildBalancerService;
     }
 
-    public function balance(Request $request)
+    public function balance()
     {
         try {
-            $numGuildas = $request->input('num_guildas');
             $guilds = $this->guildRepository->getAllGuilds();
             $players = $this->guildRepository->getAllPlayers();
-
-            $missingClassesWarning = $this->guildBalancerService->balanceGuilds($numGuildas, $guilds, $players);
-
+    
+            $missingClassesWarning = $this->guildBalancerService->balanceGuilds($guilds, $players);
+    
             if ($missingClassesWarning) {
                 return redirect()->back()->with('warning', 'Guildas balanceadas com sucesso! Algumas guildas não possuem uma formação ideal de classes.');
             }
-
+    
             return redirect()->back()->with('success', 'Guildas balanceadas com sucesso!');
         } catch (Exception $e) {
-            // Exibe a mensagem de erro para o usuário
             session()->flash('error', 'Erro ao balancear as guildas: ' . $e->getMessage());
             return redirect()->route('home');
         }

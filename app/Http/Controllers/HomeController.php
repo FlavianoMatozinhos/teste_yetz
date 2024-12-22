@@ -8,9 +8,6 @@ use App\Models\User;
 
 class HomeController extends Controller
 {
-    /**
-     * Exibe a página inicial.
-     */
     public function index()
     {
 
@@ -20,20 +17,22 @@ class HomeController extends Controller
         });
 
         $guilds = Guild::all()->map(function ($guild) {
-            $allConfirmed = $guild->players->every(function ($player) {
-                return $player->confirmed == 1;
-            });
-    
-            $guild->confirmation_status = $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
+            if ($guild->players->isEmpty()) {
+                $guild->confirmation_status = 'Sem Players';
+            } else {
+                $allConfirmed = $guild->players->every(function ($player) {
+                    return $player->confirmed == 1;
+                });
+                $guild->confirmation_status = $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
+            }
             return $guild;
         });
 
-        // Dados para a view
         $data = [
             'message' => 'Bem-vindo à Home!',
-            'guids' => $guilds,  // Pega todas as guildas
+            'guids' => $guilds,
             'players' => $players,
-            'numGuildas' => Guild::count(), // Pega todos os jogadores
+            'numGuildas' => Guild::count(),
         ];
     
         return view('home', $data);

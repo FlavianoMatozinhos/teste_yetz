@@ -27,14 +27,7 @@
         <a href="{{ route('guild.create') }}" class="btn btn-success mb-3">Criar Guilda</a>
         <form method="POST" action="{{ route('balance') }}">
             @csrf
-            <label for="num_guildas">Número de Guildas:</label>
-            <select name="num_guildas" id="num_guildas">
-                @for ($i = 1; $i <= $numGuildas; $i++)
-                    <option value="{{ $i }}">{{ $i }} Guilda{{ $i > 1 ? 's' : '' }}</option>
-                @endfor
-            </select>
-            
-            <button type="submit">Balancear</button>
+            <button type="submit" class="btn btn-primary">Balancear Guildas</button>
         </form>      
     @endif
 

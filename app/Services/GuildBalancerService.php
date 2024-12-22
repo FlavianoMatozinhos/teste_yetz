@@ -9,35 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 class GuildBalancerService
 {
-    public function balanceGuilds(int $numGuildas)
+    public function balanceGuilds($guilds, $players)
     {
         try {
-            $guilds = Guild::all();
-            $players = User::where('confirmed', 1)->get();
-            
-            if ($numGuildas > count($guilds)) {
-                return redirect()->back()->with('error', 'O número de guildas selecionadas é maior do que o número de guildas cadastradas.');
-            }
-
-            if ($numGuildas < count($guilds)) {
-                return redirect()->back()->with('error', "Não é possível balancear com menos de {$guilds->count()} guildas.");
-            }
-
-            $playersPerGuild = ceil(count($players) / $numGuildas);
-
-            $guildPlayerCounts = array_fill(0, count($guilds), 0);
-
-            $players = $players->sortByDesc('xp');
+            $players = $players->sortByDesc('xp'); // Ordena por XP em ordem decrescente
 
             $playerAllocations = [];
-
-            $missingClassesWarning = false;
+            $guildPlayerCounts = array_fill(0, count($guilds), 0);
 
             foreach ($players as $player) {
                 $guildIndex = $this->findGuildWithLeastXP($guildPlayerCounts, $guilds, $player);
 
                 if ($guildIndex === null) {
-                    session()->flash('error', 'Não é possível balancear os jogadores respeitando as restrições de tamanho de guilda.');
+                    continue; // Se nenhuma guilda estiver disponível, o jogador não será alocado
                 }
 
                 $guild = $guilds[$guildIndex];
@@ -47,19 +31,15 @@ class GuildBalancerService
                 $guildPlayerCounts[$guildIndex]++;
 
                 $playerAllocations[] = ['player_id' => $player->id, 'guild_id' => $guild->id];
-
-                $this->checkGuildClasses($guild, $playerAllocations, $missingClassesWarning);
             }
 
-            $this->checkGuildSizes($guilds, $guildPlayerCounts);
-
-            return $missingClassesWarning;
+            return false; // Não haverá mais warning para classes ausentes
         } catch (Exception $e) {
             Log::error('Erro no balanceamento de guildas: ' . $e->getMessage());
-            session()->flash('error', 'Erro ao balancear as guildas: ' . $e->getMessage());
-            return redirect()->route('home');
+            throw $e;
         }
     }
+
 
     private function findGuildWithLeastXP($guildPlayerCounts, $guilds, $player)
     {
