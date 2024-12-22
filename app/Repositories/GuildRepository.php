@@ -14,7 +14,7 @@ class GuildRepository
 
     public function getAllPlayers()
     {
-        return User::all();
+        return User::where('confirmed', 1)->get();
     }
 
     public function getPlayersInGuild($guildId)

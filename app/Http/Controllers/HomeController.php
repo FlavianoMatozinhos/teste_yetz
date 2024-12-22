@@ -13,11 +13,26 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+        $players = User::all()->map(function ($player) {
+            $player->confirmed = $player->confirmed ? 'Sim' : 'Não';
+            return $player;
+        });
+
+        $guilds = Guild::all()->map(function ($guild) {
+            $allConfirmed = $guild->players->every(function ($player) {
+                return $player->confirmed == 1;
+            });
+    
+            $guild->confirmation_status = $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
+            return $guild;
+        });
+
         // Dados para a view
         $data = [
             'message' => 'Bem-vindo à Home!',
-            'guids' => Guild::all(),  // Pega todas as guildas
-            'players' => User::all(),
+            'guids' => $guilds,  // Pega todas as guildas
+            'players' => $players,
             'numGuildas' => Guild::count(), // Pega todos os jogadores
         ];
     
