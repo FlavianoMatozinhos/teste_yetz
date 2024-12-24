@@ -7,6 +7,23 @@ use App\Repositories\GuildRepository;
 use App\Repositories\PlayerRepository;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Info(title="API Home", version="1.0.0")
+ * 
+ * @OA\Get(
+ *     path="/",
+ *     summary="Exibe informações sobre guildas e jogadores",
+ *     tags={"Home"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Retorna informações da Home com guildas e jogadores",
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Erro interno do servidor"
+ *     )
+ * )
+ */
 class HomeController extends Controller
 {
     protected $guildRepository;

@@ -7,6 +7,16 @@ use App\Services\GuildBalancerService;
 use Illuminate\Http\Request;
 use Exception;
 
+/**
+ * @OA\Schema(
+ *     schema="Guild",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Guild Name"),
+ *     @OA\Property(property="level", type="integer", example=10),
+ *     @OA\Property(property="members", type="array", @OA\Items(type="string"), example={"Player1", "Player2"})
+ * )
+ */
 class GuildController extends Controller
 {
     protected $guildRepository;
@@ -18,6 +28,21 @@ class GuildController extends Controller
         $this->guildBalancerService = $guildBalancerService;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/guilds/balance",
+     *     summary="Balancear guildas",
+     *     tags={"Guilds"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Guildas balanceadas com sucesso"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao balancear guildas"
+     *     )
+     * )
+     */
     public function balance()
     {
         try {
@@ -37,6 +62,19 @@ class GuildController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/guilds",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de guildas",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Guild")
+     *         )
+     *     )
+     * )
+     */
     public function index(Request $request)
     {
         try {
@@ -52,6 +90,26 @@ class GuildController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/guilds",
+     *     summary="Criar uma nova guilda",
+     *     tags={"Guilds"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Guild")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Guilda criada com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Guild")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Erro ao criar guilda"
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $result = $this->guildBalancerService->createGuild($request->all());
@@ -59,27 +117,48 @@ class GuildController extends Controller
         $responseData = $result->getData();
 
         $status = $responseData->status;
-    
+
         if ($status === 'error') {
-            // Faça algo em caso de erro
-            return response()->json([
-                'status' => 'error',
-                'message' => $responseData->message,
-                'status_code' => $responseData->status_code,
+            return response()->json([ 
+                'status' => 'error', 
+                'message' => $responseData->message, 
+                'status_code' => $responseData->status_code, 
             ], $responseData->status_code);
         }
-    
-        // Retorna sucesso com os dados da guilda criada
+
         return response()->json(
             [
-                'status' => 'success', // Adiciona status para indicar sucesso
+                'status' => 'success',
                 'message' => 'Guilda criada com sucesso.',
                 'data' => $result['data'],
             ],
-            201 // Código de status HTTP para sucesso
+            201
         );
     }
 
+    /**
+     * @OA\Get(
+     *     path="/guilds/{id}",
+     *     summary="Exibir uma guilda específica",
+     *     tags={"Guilds"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da guilda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Guilda encontrada",
+     *         @OA\JsonContent(ref="#/components/schemas/Guild")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Guilda não encontrada"
+     *     )
+     * )
+     */
     public function show($id)
     {
         $result = $this->guildBalancerService->getGuildById($id);
@@ -104,7 +183,33 @@ class GuildController extends Controller
         );
     }
 
-
+    /**
+     * @OA\Put(
+     *     path="/guilds/{id}",
+     *     summary="Atualizar uma guilda específica",
+     *     tags={"Guilds"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da guilda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Guild")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Guilda atualizada",
+     *         @OA\JsonContent(ref="#/components/schemas/Guild")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Erro ao atualizar guilda"
+     *     )
+     * )
+     */
     public function update(Request $request, $id)
     {
         $result = $this->guildBalancerService->updateGuild($id, $request->all());
@@ -129,6 +234,28 @@ class GuildController extends Controller
         );
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/guilds/{id}",
+     *     summary="Deletar uma guilda específica",
+     *     tags={"Guilds"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da guilda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Guilda deletada com sucesso"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Erro ao deletar guilda"
+     *     )
+     * )
+     */
     public function destroy($id)
     {
         $result = $this->guildBalancerService->deleteGuild($id);

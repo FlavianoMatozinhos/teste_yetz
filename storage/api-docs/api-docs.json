@@ -1,0 +1,880 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Home",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/classes": {
+            "get": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Lista todas as classes",
+                "operationId": "6b25f6b03203da799fad5fdc967c1457",
+                "responses": {
+                    "200": {
+                        "description": "Lista de classes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Classes listadas com sucesso."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Cria uma nova classe",
+                "operationId": "9f95c6bbce965c91422660401663e65f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Class"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Classe criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Classe criada com sucesso."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "New Class"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro"
+                    }
+                }
+            }
+        },
+        "/api/classes/{id}": {
+            "get": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Exibe uma classe específica",
+                "operationId": "f274e72a26ce40eebdfb152c600497b7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Classe encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Classe encontrada com sucesso."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Class 1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Classe não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Atualiza uma classe específica",
+                "operationId": "6e3497662375c146c2f2ab31acd3b39f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Class"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Classe atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Classe atualizada com sucesso."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Updated Class"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Deleta uma classe específica",
+                "operationId": "dff852ba04bd04d62800f49331039c43",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Classe deletada"
+                    },
+                    "404": {
+                        "description": "Classe não encontrada"
+                    }
+                }
+            }
+        },
+        "/guilds/balance": {
+            "post": {
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Balancear guildas",
+                "operationId": "2cb4c239a41b7d1ed7a357ca7b5a116b",
+                "responses": {
+                    "200": {
+                        "description": "Guildas balanceadas com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao balancear guildas"
+                    }
+                }
+            }
+        },
+        "/guilds": {
+            "get": {
+                "operationId": "6da9fe90b35488a3597f1a3d106655b3",
+                "responses": {
+                    "200": {
+                        "description": "Lista de guildas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Guild"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Criar uma nova guilda",
+                "operationId": "cc5542c43e53c3b178a97ade476c0ade",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Guild"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Guilda criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Guild"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao criar guilda"
+                    }
+                }
+            }
+        },
+        "/guilds/{id}": {
+            "get": {
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Exibir uma guilda específica",
+                "operationId": "4f8c55cf7e2ff2c059f6ceba4e4ec0b9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da guilda",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Guilda encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Guild"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Guilda não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Atualizar uma guilda específica",
+                "operationId": "f3622a7489f2f5af59b48d21762431b6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da guilda",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Guild"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Guilda atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Guild"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao atualizar guilda"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Deletar uma guilda específica",
+                "operationId": "4aac1e4eb94350fea3ffd6205f1a04a5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da guilda",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Guilda deletada com sucesso"
+                    },
+                    "400": {
+                        "description": "Erro ao deletar guilda"
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "tags": [
+                    "Home"
+                ],
+                "summary": "Exibe informações sobre guildas e jogadores",
+                "operationId": "6f2b75c02fd616cd9e649c384ad8c7fa",
+                "responses": {
+                    "200": {
+                        "description": "Retorna informações da Home com guildas e jogadores"
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "get": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Exibe a página de login.",
+                "operationId": "c6c57832bcce09c6e5a4cd562f1fedc5",
+                "responses": {
+                    "200": {
+                        "description": "Retorna a página de login."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Processa o login do usuário.",
+                "operationId": "aec6d9fd8be3c8b24cda0c17a60a8bb1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuario@exemplo.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "senha123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login realizado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Erro de autenticação.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credenciais inválidas."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Logout"
+                ],
+                "summary": "Realiza o logout do usuário.",
+                "operationId": "214cdf6ce10b65006d77963647f563fb",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout realizado com sucesso."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao realizar logout.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro interno do servidor ao realizar logout."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/register": {
+            "get": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Exibe a página de registro com classes e jogadores disponíveis.",
+                "operationId": "20acbbb20f7fce1bdbbc677c9dffd8f2",
+                "responses": {
+                    "200": {
+                        "description": "Dados de classes e jogadores disponíveis.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "classes": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "players": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Armazena um novo usuário no banco de dados.",
+                "operationId": "4ae83e03d934d074c11bcd82575c8c2a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "class": {
+                                        "type": "string",
+                                        "example": "Warrior"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registro realizado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registro realizado com sucesso! Agora você pode fazer login."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro na validação dos dados.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/register/{id}": {
+            "put": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Atualiza os dados de um usuário existente.",
+                "operationId": "a92870cdd3345869a5d8b58f180b358c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jane Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "jane.doe@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário atualizado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário atualizado com sucesso."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Remove um usuário.",
+                "operationId": "b12e588fff1852fa664cc8e2088bb41b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário removido com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário removido com sucesso."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao remover usuário.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro ao remover usuário."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Guild": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Guild Name"
+                    },
+                    "level": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "Player1",
+                            "Player2"
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Classes",
+            "description": "Classes"
+        },
+        {
+            "name": "Guilds",
+            "description": "Guilds"
+        },
+        {
+            "name": "Home",
+            "description": "Home"
+        },
+        {
+            "name": "Login",
+            "description": "Login"
+        },
+        {
+            "name": "Logout",
+            "description": "Logout"
+        },
+        {
+            "name": "Register",
+            "description": "Register"
+        }
+    ]
+}

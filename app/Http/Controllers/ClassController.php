@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ClassService;
 use Illuminate\Http\Request;
 
-/**
- * @OA\Info(title="API de Classes", version="1.0")
- */
+
 class ClassController extends Controller
 {
     protected $classService;

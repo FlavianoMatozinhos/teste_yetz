@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\LoginService;
 use Illuminate\Http\Request;
 
+
 class LoginController extends Controller
 {
     protected $loginService;
@@ -15,7 +16,15 @@ class LoginController extends Controller
     }
 
     /**
-     * Exibe a página de login.
+     * @OA\Get(
+     *     path="/login",
+     *     summary="Exibe a página de login.",
+     *     tags={"Login"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna a página de login."
+     *     )
+     * )
      */
     public function index()
     {
@@ -23,7 +32,37 @@ class LoginController extends Controller
     }
 
     /**
-     * Processa o login do usuário.
+     * @OA\Post(
+     *     path="/login",
+     *     summary="Processa o login do usuário.",
+     *     tags={"Login"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="email", type="string", format="email", example="usuario@exemplo.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="senha123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login realizado com sucesso.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="token", type="string", example="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Erro de autenticação.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Credenciais inválidas.")
+     *         )
+     *     )
+     * )
      */
     public function store(Request $request)
     {

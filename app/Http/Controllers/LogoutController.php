@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\LogoutService;
 use Illuminate\Http\Request;
 
+
 class LogoutController extends Controller
 {
     protected $logoutService;
@@ -15,7 +16,30 @@ class LogoutController extends Controller
     }
 
     /**
-     * Realiza o logout do usuário.
+     * @OA\Post(
+     *     path="/logout",
+     *     summary="Realiza o logout do usuário.",
+     *     tags={"Logout"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logout realizado com sucesso.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Logout realizado com sucesso.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao realizar logout.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Erro interno do servidor ao realizar logout.")
+     *         )
+     *     )
+     * )
      */
     public function logout(Request $request)
     {
