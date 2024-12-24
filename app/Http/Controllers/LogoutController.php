@@ -22,9 +22,23 @@ class LogoutController extends Controller
         $result = $this->logoutService->logoutUser($request->user());
 
         if ($result['status'] === 'error') {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $result['message']
+                ], 500);
+            }
+
             return redirect()->back()->withErrors(['error' => $result['message']]);
         }
 
-        return redirect()->route('login')->with('success', 'Você saiu com sucesso.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $result['message']
+            ], 200);
+        }
+
+        return redirect()->route('login')->with('success', $result['message']);
     }
 }

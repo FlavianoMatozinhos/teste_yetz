@@ -1,5 +1,3 @@
-<!-- resources/views/auth/register.blade.php -->
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -13,6 +11,18 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <h2 class="mt-5">Cadastro de Usuário</h2>
+
+                <!-- Exibindo erros globais -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('register.submit') }}" method="POST">
                     @csrf
                     <div class="mb-3">

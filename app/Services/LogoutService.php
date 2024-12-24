@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\TokenRepository;
+use Exception;
 
 class LogoutService
 {
@@ -23,8 +24,11 @@ class LogoutService
 
             auth()->logout();
 
-            return ['status' => 'success'];
-        } catch (\Exception $e) {
+            return [
+                'status' => 'success',
+                'message' => 'Logout realizado com sucesso.'
+            ];
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Erro ao realizar logout: ' . $e->getMessage()

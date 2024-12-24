@@ -35,7 +35,7 @@ class GuildRepository
      */
     public function getAllPlayers(): Collection
     {
-        return User::all(); // Ou outro modelo apropriado para representar os jogadores
+        return User::all();
     }
 
     /**
@@ -99,8 +99,9 @@ class GuildRepository
      * @param Guild $guild
      * @return void
      */
-    public function deleteGuild(Guild $guild): void
+    public function delete($id): void
     {
+        $guild = Guild::findOrFail($id);
         $guild->delete();
     }
 
@@ -112,6 +113,25 @@ class GuildRepository
      */
     public function findGuildById(int $id): ?Guild
     {
-        return Guild::find($id);
+        return Guild::findOrFail($id);
+    }
+
+    protected function validateGuildId($guildId)
+    {
+        return Guild::where('id', $guildId)->exists();
+    }
+
+    public function update($id, array $data)
+    {
+        $class = Guild::findOrFail($id);
+        $class->update($data);
+        return $class;
+    }
+
+    public function existsByName($name)
+    {
+        $query = Guild::where('name', $name);
+
+        return $query->exists();
     }
 }

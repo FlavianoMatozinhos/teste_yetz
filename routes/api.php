@@ -11,11 +11,11 @@ use App\Http\Controllers\GuildController;
 use App\Http\Controllers\AuthController;
 
 
-Route::get('/players', [PlayerController::class, 'index']);
-Route::post('/players', [PlayerController::class, 'store']);
-Route::get('/players/{id}', [PlayerController::class, 'show']);
-Route::put('/players/{id}', [PlayerController::class, 'update']);
-Route::delete('/players/{id}', [PlayerController::class, 'destroy']);
+Route::get('/players', [RegisterController::class, 'index']);
+Route::post('/players', [RegisterController::class, 'store']);
+Route::get('/players/{id}', [RegisterController::class, 'show']);
+Route::put('/players/{id}', [RegisterController::class, 'update']);
+Route::delete('/players/{id}', [RegisterController::class, 'destroy']);
 
 Route::get('/classes', [ClassController::class, 'index']);
 Route::post('/classes', [ClassController::class, 'store']);
@@ -23,16 +23,14 @@ Route::get('/classes/{id}', [ClassController::class, 'show']);
 Route::put('/classes/{id}', [ClassController::class, 'update']);
 Route::delete('/classes/{id}', [ClassController::class, 'destroy']);
 
-
-Route::get('/guilds', [GuildController::class, 'index']);
-Route::middleware('auth:api')->post('/guilds', [GuildController::class, 'store']);
-
-Route::get('/guilds/{id}', [GuildController::class, 'show']);
-Route::put('/guilds/{id}', [GuildController::class, 'update']);
-Route::delete('/guilds/{id}', [GuildController::class, 'destroy']);
-
-Route::get('/balance-guilds', [GuildController::class, 'balance']);
-Route::post('/guilds/balance', [GuildController::class, 'balance']);
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/guilds', [GuildController::class, 'index']);
+    Route::post('/guilds', [GuildController::class, 'store']);
+    Route::get('/guilds/{id}', [GuildController::class, 'show']);
+    Route::put('/guilds/{id}', [GuildController::class, 'update']);
+    Route::delete('/guilds/{id}', [GuildController::class, 'destroy']);
+    Route::post('/guilds/balance', [GuildController::class, 'balance']);
+});
 
 Route::post('/register', [RegisterController::class, 'store']);
 Route::post('/login', [LoginController::class, 'store']);

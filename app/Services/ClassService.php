@@ -28,7 +28,8 @@ class ClassService
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'data' => ['message' => 'Erro ao listar classes.', 'error' => $e->getMessage()],
+                'message' => 'Erro ao listar classes.',
+                'error' => $e->getMessage(),
                 'status_code' => 500
             ];
         }
@@ -38,34 +39,54 @@ class ClassService
      * Cria uma nova classe.
      */
     public function createClass(array $data)
-    {
+    {    
         try {
+            // Valida os dados de entrada
             $validator = validator($data, [
                 'name' => 'required|string|max:255'
             ]);
-
+    
+            // Se a validação falhar, lança uma exceção de validação
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
-
+    
+            // Verifica se já existe uma classe com o mesmo nome
+            if ($this->classRepository->existsByName($data['name'])) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Já existe uma classe com esse nome.',
+                    'status_code' => 400, // Bad Request
+                    'data' => null
+                ];
+            }
+    
+            // Cria a nova classe
+            $newClass = $this->classRepository->create($data);
+    
             return [
                 'status' => 'success',
-                'data' => $this->classRepository->create($data)
+                'data' => $newClass
             ];
         } catch (ValidationException $e) {
             return [
                 'status' => 'error',
-                'data' => ['message' => 'Dados inválidos.', 'errors' => $e->errors()],
-                'status_code' => 422
+                'message' => 'Dados inválidos.',
+                'errors' => $e->errors(),
+                'status_code' => 422,
+                'data' => null
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'data' => ['message' => 'Erro ao criar classe.', 'error' => $e->getMessage()],
-                'status_code' => 500
+                'message' => 'Erro ao criar classe.',
+                'error' => $e->getMessage(),
+                'status_code' => 500,
+                'data' => null
             ];
         }
     }
+    
 
     /**
      * Retorna uma classe pelo ID.
@@ -73,15 +94,26 @@ class ClassService
     public function getClassById($id)
     {
         try {
+            $class = $this->classRepository->findById($id);
+            
+            if (!$class) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Classe não encontrada.',
+                    'status_code' => 404
+                ];
+            }
+
             return [
                 'status' => 'success',
-                'data' => $this->classRepository->findById($id)
+                'data' => $class
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'data' => ['message' => 'Classe não encontrada.', 'error' => $e->getMessage()],
-                'status_code' => 404
+                'message' => 'Erro ao buscar classe.',
+                'error' => $e->getMessage(),
+                'status_code' => 500
             ];
         }
     }
@@ -100,14 +132,33 @@ class ClassService
                 throw new ValidationException($validator);
             }
 
+            if (empty($data['name'])) {
+                return [
+                    'status' => 'error',
+                    'message' => 'O nome da classe não pode estar vazio.',
+                    'status_code' => 422
+                ];
+            }
+
+            if ($this->classRepository->existsByName($data['name'], $id)) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Já existe uma classe com esse nome.',
+                    'status_code' => 400
+                ];
+            }
+
+            $updatedClass = $this->classRepository->update($id, $data);
+
             return [
                 'status' => 'success',
-                'data' => $this->classRepository->update($id, $data)
+                'data' => $updatedClass
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'data' => ['message' => 'Erro ao atualizar classe.', 'error' => $e->getMessage()],
+                'message' => 'Erro ao atualizar classe.',
+                'error' => $e->getMessage(),
                 'status_code' => 500
             ];
         }
@@ -124,9 +175,12 @@ class ClassService
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'data' => ['message' => 'Erro ao excluir classe.', 'error' => $e->getMessage()],
-                'status_code' => 500
+                'message' => 'Erro ao excluir classe.',
+                'error' => $e->getMessage(),
+                'status_code' => 500,
+                'data' => null
             ];
         }
     }
+    
 }

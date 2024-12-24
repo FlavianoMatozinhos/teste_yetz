@@ -12,7 +12,6 @@
             <div class="col-md-6">
                 <h2 class="mt-5">Login</h2>
 
-                <!-- Exibindo erros de validação -->
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -23,7 +22,6 @@
                     </div>
                 @endif
 
-                <!-- Formulário de Login -->
                 <form action="{{ route('login.submit') }}" method="POST">
                     @csrf
 
