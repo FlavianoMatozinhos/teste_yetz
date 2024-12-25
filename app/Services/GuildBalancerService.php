@@ -160,7 +160,6 @@ class GuildBalancerService
             ], 500);
         }
     }
-    
 
     public function getGuildById($id)
     {
@@ -193,13 +192,15 @@ class GuildBalancerService
     {
         try {
             $validator = validator($data, [
-                'name' => 'nullable|string|max:255'
+                'name' => 'nullable|string|max:255',
+                'max_players' => 'nullable|integer',
+                'min_players' => 'nullable|integer',
             ]);
-
+            
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
-
+            
             if (empty($data['name'])) {
                 return [
                     'status' => 'error',
@@ -208,11 +209,28 @@ class GuildBalancerService
                 ];
             }
 
-            if ($this->guildRepository->existsByName($data['name'], $id)) {
+            $existingGuild = $this->guildRepository->findByName($data['name']);
+            
+            if ($existingGuild && $existingGuild->id != $id) {
                 return [
                     'status' => 'error',
                     'message' => 'Já existe uma Guilda com esse nome.',
                     'status_code' => 400
+                ];
+            }
+            
+            $hasChanges = $existingGuild 
+            ? (
+                $existingGuild->max_players != ($data['max_players'] ?? $existingGuild->max_players) ||
+                $existingGuild->min_players != ($data['min_players'] ?? $existingGuild->min_players)
+            )
+            : true;
+            
+            if (!$hasChanges) {
+                return [
+                    'status' => 'warning',
+                    'data' => ['message' => 'Nenhuma alteração necessária. Os dados já estão atualizados.'],
+                    'status_code' => 200
                 ];
             }
 

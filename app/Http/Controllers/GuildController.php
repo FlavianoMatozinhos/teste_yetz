@@ -267,16 +267,20 @@ class GuildController extends Controller
     {
         try {
             $result = $this->guildBalancerService->updateGuild($id, $request->all());
-
+            
             if ($result['status'] === 'error') {
                 if ($request->expectsJson()) {
-                    return response()->json([
-                        'status' => 'error',
-                        'errors' => $result['errors'] ?? $result['data']
-                    ], $result['status_code']);
+                    return response()->json(
+                        [
+                            'message' => $result['message'],
+                            'status_code' => $result['status_code'],
+                            'error' => $result['error'] ?? null,
+                        ],
+                        $result['status_code']
+                    );
+                } else {
+                    return redirect()->back()->with('error', $result['message']);
                 }
-
-                return redirect()->back()->with('error', $result['message']);
             }
 
             if ($request->expectsJson()) {
@@ -314,10 +318,25 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             $result = $this->guildBalancerService->deleteGuild($id);
+
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json(
+                        [
+                            'message' => $result['message'],
+                            'status_code' => $result['status_code'],
+                            'error' => $result['error'] ?? null,
+                        ],
+                        $result['status_code']
+                    );
+                } else {
+                    return redirect()->back()->with('error', $result['message']);
+                }
+            }
 
             return redirect()->back()->with('success', $result['data']['message']);
         } catch (Exception $e) {

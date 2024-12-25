@@ -121,4 +121,8 @@ class GuildRepository
         return User::where('guild_id', $guildId)->with('class')->get();
     }
 
+    public function findByName($name)
+    {
+        return Guild::where('name', $name)->first();
+    }
 }
