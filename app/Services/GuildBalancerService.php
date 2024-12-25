@@ -141,7 +141,7 @@ class GuildBalancerService
             }
     
             $guildData = $data;
-            $guildData['creator_id'] = Auth::id();
+            $guildData['user_id'] = Auth::id();
     
             $this->guildRepository->createGuild($guildData);
     
@@ -249,4 +249,17 @@ class GuildBalancerService
             ];
         }
     }
+
+    public function getPlayersByGuildId($guildId)
+{
+    try {
+        $players = $this->guildRepository->getPlayersByGuildId($guildId);
+
+        return $players;
+    } catch (\Exception $e) {
+        Log::error("Erro ao buscar jogadores da guilda {$guildId}: {$e->getMessage()}");
+        throw $e;
+    }
+}
+
 }

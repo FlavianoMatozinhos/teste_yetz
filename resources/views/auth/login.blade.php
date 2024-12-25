@@ -37,6 +37,10 @@
 
                     <button type="submit" class="btn btn-primary">Entrar</button>
                 </form>
+
+                <div class="mt-3">
+                    <a href="{{ route('register.form') }}" class="btn btn-secondary">Criar conta</a>
+                </div>
             </div>
         </div>
     </div>

@@ -21,9 +21,9 @@ class UsersTableSeeder extends Seeder
         $classArqueiro = Classe::firstOrCreate(['name' => 'Arqueiro']);
         $classClerigo = Classe::firstOrCreate(['name' => 'Clérigo']);
 
-        $guild1 = Guild::firstOrCreate(['name' => 'Guilda A', 'max_players' => 3, 'min_players' => 0, 'creator_id' => 7]);
-        $guild2 = Guild::firstOrCreate(['name' => 'Guilda B', 'max_players' => 1, 'min_players' => 1, 'creator_id' => 7]);
-        $guild3 = Guild::firstOrCreate(['name' => 'Guilda C', 'max_players' => 0, 'min_players' => 0, 'creator_id' => 7]);
+        $guild1 = Guild::firstOrCreate(['name' => 'Guilda A', 'max_players' => 3, 'min_players' => 0, 'user_id' => 7]);
+        $guild2 = Guild::firstOrCreate(['name' => 'Guilda B', 'max_players' => 1, 'min_players' => 1, 'user_id' => 7]);
+        $guild3 = Guild::firstOrCreate(['name' => 'Guilda C', 'max_players' => 0, 'min_players' => 0, 'user_id' => 7]);
 
         $users = [
             [

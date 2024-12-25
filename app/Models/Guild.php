@@ -8,7 +8,7 @@ class Guild extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'max_players', 'min_players', 'creator_id'];
+    protected $fillable = ['name', 'max_players', 'min_players', 'user_id'];
 
     public function players()
     {

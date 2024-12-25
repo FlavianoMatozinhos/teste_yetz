@@ -130,7 +130,7 @@ class GuildController extends Controller
             [
                 'status' => 'success',
                 'message' => 'Guilda criada com sucesso.',
-                'data' => $result['data'],
+                // 'data' => $result['data'],
             ],
             201
         );
@@ -174,14 +174,51 @@ class GuildController extends Controller
             );
         }
 
-        return response()->json(
-            [
-                'data' => $result['data'],
-                'message' => 'Guilda encontrada com sucesso.',
-            ],
-            200
-        );
+        $guild = $result['data'];
+
+        $players = $this->guildBalancerService->getPlayersByGuildId($id);
+
+        return view('guild.show', compact('guild', 'players'));
     }
+
+    /**
+     * @OA\Get(
+     *     path="/guilds/{id}/edit",
+     *     summary="Exibir formulário de edição de uma guilda específica",
+     *     tags={"Guilds"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da guilda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Formulário de edição exibido com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Guild")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Guilda não encontrada"
+     *     )
+     * )
+     */
+    public function edit($id)
+    {
+        try {
+            $guild = $this->guildRepository->findGuildById($id);
+
+            if (!$guild) {
+                return redirect()->route('home')->with('error', 'Guilda não encontrada.');
+            }
+
+            return view('guild.update', compact('guild'));
+        } catch (Exception $e) {
+            return redirect()->route('home')->with('error', 'Erro ao carregar a guilda: ' . $e->getMessage());
+        }
+    }
+
 
     /**
      * @OA\Put(

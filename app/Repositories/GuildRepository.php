@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Guild;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 
 class GuildRepository
@@ -101,6 +102,7 @@ class GuildRepository
      */
     public function delete($id): void
     {
+        DB::table('users')->where('guild_id', $id)->update(['guild_id' => null]);
         $guild = Guild::findOrFail($id);
         $guild->delete();
     }
@@ -134,4 +136,10 @@ class GuildRepository
 
         return $query->exists();
     }
+
+    public function getPlayersByGuildId($guildId)
+    {
+        return User::where('guild_id', $guildId)->with('class')->get();
+    }
+
 }

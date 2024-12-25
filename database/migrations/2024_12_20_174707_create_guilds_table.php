@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedInteger(column: 'max_players');
             $table->unsignedInteger(column: 'min_players');
-            $table->unsignedBigInteger('creator_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('creator_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
         });        
     }
 

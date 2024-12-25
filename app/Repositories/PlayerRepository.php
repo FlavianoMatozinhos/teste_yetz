@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Classe;
 use App\Models\Guild;
 use App\Models\User;
 use App\Models\Role;
@@ -152,6 +153,34 @@ class PlayerRepository
      */
     public function deletePlayer($id)
     {
+        DB::table('guilds')->where('user_id', $id)->update(['user_id' => null]);
         return $this->model->where('id', $id)->delete();
+    }
+
+    public function getGuildByPlayerId($id)
+    {
+        $player = $this->model->with('guild')->find($id);
+        
+        if (!$player || !$player->guild) {
+            return [
+                'status' => 'error',
+                'message' => 'Guilda não encontrada para este jogador.',
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'data' => $player->guild,
+        ];
+    }
+
+    public function findByIdAndConfirm($id)
+    {
+        return $this->model->where('id', $id)->update(['confirmed' => true]);
+    }
+
+    public function findByIdAndNoConfirm($id)
+    {
+        return $this->model->where('id', $id)->update(['confirmed' => false]);
     }
 }

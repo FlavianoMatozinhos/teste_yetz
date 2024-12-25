@@ -27,7 +27,20 @@ class RegisterService
      */
     public function getAllClasses()
     {
-        return $this->classRepository->getAll(); 
+        $class = $this->classRepository->getAll();
+
+        if (!$class) {
+            return [
+                'status' => 'error',
+                'message' => 'Classe não encontrada.',
+                'status_code' => 404
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'data' => $class
+        ];
     }
 
     public function getAllPlayers()
@@ -83,12 +96,9 @@ class RegisterService
             $validator = Validator::make($data, [
                 'name' => 'sometimes|string|max:255',
                 'email' => 'sometimes|string|email|max:255|unique:users,email,' . $id,
-                'password' => 'nullable|string|min:8|confirmed',
-                'role_id' => 'sometimes|exists:roles,id',
+                'password' => 'nullable|string|min:8',
                 'xp' => 'nullable|numeric',
-                'confirmed' => 'sometimes|boolean',
                 'class_id' => 'sometimes|exists:classes,id',
-                'guild_id' => 'nullable|string|exists:guilds,id',
             ]);
 
             if ($validator->fails()) {
@@ -154,6 +164,87 @@ class RegisterService
                 'status' => 'error',
                 'data' => ['message' => 'Erro ao excluir o usuário.', 'error' => $e->getMessage()],
                 'status_code' => 500,
+            ];
+        }
+    }
+
+    public function getPlayerById($id)
+    {
+        try {
+            $class = $this->userRepository->findById($id);
+            
+            if (!$class) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Guilda não encontrada.',
+                    'status_code' => 404
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'data' => $class
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Erro ao buscar Guilda.',
+                'error' => $e->getMessage(),
+                'status_code' => 500
+            ];
+        }
+    }
+
+    public function getPlayerByIdAndConfirm($id) 
+    {
+        try {
+            $confirm = $this->userRepository->findByIdAndConfirm($id);
+            
+            if (!$confirm) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Voce ja esta pronto.',
+                    'status_code' => 404
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'data' => $confirm
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Erro ao dar pronto.',
+                'error' => $e->getMessage(),
+                'status_code' => 500
+            ];
+        }
+    }
+
+    public function getPlayerByIdAndNoConfirm($id) 
+    {
+        try {
+            $confirm = $this->userRepository->findByIdAndNoConfirm($id);
+            
+            if (!$confirm) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Voce nao esta pronto!.',
+                    'status_code' => 404
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'data' => $confirm
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Erro ao dar pronto.',
+                'error' => $e->getMessage(),
+                'status_code' => 500
             ];
         }
     }

@@ -3,16 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Services\RegisterService;
+use App\Services\ClassService;
+use App\Services\GuildBalancerService;
 use Illuminate\Http\Request;
 
 
 class RegisterController extends Controller
 {
     protected $registerService;
+    protected $classService;
+    protected $guildService;
 
-    public function __construct(RegisterService $registerService)
+    public function __construct(RegisterService $registerService, ClassService $classService, GuildBalancerService $guildService)
     {
         $this->registerService = $registerService;
+        $this->classService = $classService;
+        $this->guildService = $guildService;
     }
 
     /**
@@ -37,8 +43,10 @@ class RegisterController extends Controller
     public function index(Request $request)
     {
         $players = $this->registerService->getAllPlayers();
-        $classes = $this->registerService->getAllClasses();
+        $classesResult = $this->registerService->getAllClasses();
 
+        $classes = $classesResult['data'];
+    
         if ($request->expectsJson()) {
             return response()->json($players, 200);
         }
@@ -106,6 +114,64 @@ class RegisterController extends Controller
         return redirect('/login')->with('success', 'Registro realizado com sucesso! Faça login para continuar.');
     }
 
+    public function show($id)
+    {
+        $result = $this->registerService->getPlayerById($id);
+
+        if ($result['status'] === 'error') {
+            return response()->json(
+                [
+                    'message' => $result['message'],
+                    'status_code' => $result['status_code'],
+                    'error' => $result['error'] ?? null,
+                ],
+                $result['status_code']
+            );
+        }
+
+        $player = $result['data'];
+
+        return view('player.show', compact('player'));
+    }
+
+    public function edit($id)
+    {
+        $playerResult = $this->registerService->getPlayerById($id);
+        $player = $playerResult['data'];
+    
+        $classesResult = $this->registerService->getAllClasses();
+        $classes = $classesResult['data'];
+    
+        return view('player.update', [
+            'player' => $player,
+            'classes' => $classes,
+        ]);
+    }
+
+    public function confirm($id)
+    {
+        try {
+            $this->registerService->getPlayerByIdAndConfirm($id);
+
+            return redirect()->back()->with('success', 'Confirmado para batalhar!');
+        } catch (Exception $e) {
+            session()->flash('error', 'Erro ao confirmar: ' . $e->getMessage());
+            return redirect()->route('home')->with('error', 'Houve um erro ao confirmar batalha. Por favor, tente novamente.');
+        }
+    }
+
+    public function noconfirm($id)
+    {
+        try {
+            $this->registerService->getPlayerByIdAndNoConfirm($id);
+
+            return redirect()->back()->with('success', 'Se retirou da batalha!');
+        } catch (Exception $e) {
+            session()->flash('error', 'Erro ao retirar confirmacao: ' . $e->getMessage());
+            return redirect()->route('home')->with('error', 'Houve um erro ao retirar confirmacao da batalha. Por favor, tente novamente.');
+        }
+    }
+
     /**
      * @OA\Put(
      *     path="/register/{id}",
@@ -139,7 +205,11 @@ class RegisterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $result = $this->registerService->updateUser($id, $request->all());
+        // Remover o campo '_token' dos dados antes de passar para o serviço
+        $data = $request->except(['_token', '_method']);
+
+        // Passar os dados filtrados para o serviço de atualização
+        $result = $this->registerService->updateUser($id, $data);
 
         if ($result['status'] === 'error') {
             if ($request->expectsJson()) {

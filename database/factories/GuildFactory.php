@@ -16,7 +16,7 @@ class GuildFactory extends Factory
             'name' => $this->faker->word,
             'max_players' => $this->faker->numberBetween(10, 50),
             'min_players' => $this->faker->numberBetween(1, 10),
-            'creator_id' => User::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }
