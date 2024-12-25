@@ -35,12 +35,11 @@
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Entrar</button>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary me-2">Entrar</button>
+                        <a href="{{ route('register.form') }}" class="btn btn-primary">Criar conta</a>
+                    </div>
                 </form>
-
-                <div class="mt-3">
-                    <a href="{{ route('register.form') }}" class="btn btn-secondary">Criar conta</a>
-                </div>
             </div>
         </div>
     </div>

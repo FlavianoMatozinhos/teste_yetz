@@ -18,7 +18,7 @@ class ClassService
     /**
      * Retorna todas as classes.
      */
-    public function getAllClasses()
+    public function getAllClasses(): array
     {
         try {
             return [
@@ -38,30 +38,26 @@ class ClassService
     /**
      * Cria uma nova classe.
      */
-    public function createClass(array $data)
+    public function createClass(array $data): array
     {    
         try {
-            // Valida os dados de entrada
             $validator = validator($data, [
                 'name' => 'required|string|max:255'
             ]);
     
-            // Se a validação falhar, lança uma exceção de validação
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
     
-            // Verifica se já existe uma classe com o mesmo nome
             if ($this->classRepository->existsByName($data['name'])) {
                 return [
                     'status' => 'error',
                     'message' => 'Já existe uma classe com esse nome.',
-                    'status_code' => 400, // Bad Request
+                    'status_code' => 400,
                     'data' => null
                 ];
             }
     
-            // Cria a nova classe
             $newClass = $this->classRepository->create($data);
     
             return [
@@ -91,7 +87,7 @@ class ClassService
     /**
      * Retorna uma classe pelo ID.
      */
-    public function getClassById($id)
+    public function getClassById($id): array
     {
         try {
             $class = $this->classRepository->findById($id);
@@ -121,7 +117,7 @@ class ClassService
     /**
      * Atualiza uma classe.
      */
-    public function updateClass($id, array $data)
+    public function updateClass($id, array $data): array
     {
         try {
             $validator = validator($data, [
@@ -167,7 +163,7 @@ class ClassService
     /**
      * Deleta uma classe.
      */
-    public function deleteClass($id)
+    public function deleteClass($id): array
     {
         try {
             $this->classRepository->delete($id);

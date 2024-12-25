@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ClassService;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 
 
@@ -32,7 +33,7 @@ class ClassController extends Controller
      *     @OA\Response(response=400, description="Erro")
      * )
      */
-    public function index()
+    public function index(): Json
     {
         $result = $this->classService->getAllClasses();
 
@@ -80,7 +81,7 @@ class ClassController extends Controller
      *     @OA\Response(response=400, description="Erro")
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request): Json
     {
         $result = $this->classService->createClass($request->all());
 
@@ -127,7 +128,7 @@ class ClassController extends Controller
      *     @OA\Response(response=404, description="Classe não encontrada")
      * )
      */
-    public function show($id)
+    public function show($id): Json
     {
         $result = $this->classService->getClassById($id);
 
@@ -181,7 +182,7 @@ class ClassController extends Controller
      *     @OA\Response(response=400, description="Erro")
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): Json
     {
         $result = $this->classService->updateClass($id, $request->all());
 
@@ -223,7 +224,7 @@ class ClassController extends Controller
      *     @OA\Response(response=404, description="Classe não encontrada")
      * )
      */
-    public function destroy($id)
+    public function destroy($id): Json
     {
         $result = $this->classService->deleteClass($id);
 

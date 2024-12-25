@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Repositories\ClassRepository;
 use App\Repositories\GuildRepository;
 use App\Repositories\PlayerRepository;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,7 +26,7 @@ class RegisterService
     /**
      * Retorna todas as classes disponíveis.
      */
-    public function getAllClasses()
+    public function getAllClasses(): array
     {
         $class = $this->classRepository->getAll();
 
@@ -43,7 +44,7 @@ class RegisterService
         ];
     }
 
-    public function getAllPlayers()
+    public function getAllPlayers(): Collection
     {
         return $this->userRepository->getAllPlayers();
     }
@@ -51,7 +52,7 @@ class RegisterService
     /**
      * Registra um novo usuário.
      */
-    public function registerUser(array $data)
+    public function registerUser(array $data): array
     {
         $validator = Validator::make($data, [
             'name' => 'required|string|max:255',
@@ -85,12 +86,12 @@ class RegisterService
         ];
     }
 
-    protected function validateRoleId($roleId)
+    protected function validateRoleId($roleId): bool
     {
         return Role::where('id', $roleId)->exists();
     }
 
-    public function updateUser($id, array $data)
+    public function updateUser($id, array $data): array
     {
         try {
             $validator = Validator::make($data, [
@@ -139,7 +140,7 @@ class RegisterService
         }
     }
 
-    public function deleteUser($id)
+    public function deleteUser($id): array
     {
         try {
             $user = $this->userRepository->findById($id);
@@ -168,7 +169,7 @@ class RegisterService
         }
     }
 
-    public function getPlayerById($id)
+    public function getPlayerById($id): array
     {
         try {
             $class = $this->userRepository->findById($id);
@@ -176,7 +177,7 @@ class RegisterService
             if (!$class) {
                 return [
                     'status' => 'error',
-                    'message' => 'Guilda não encontrada.',
+                    'message' => 'Player não encontrada.',
                     'status_code' => 404
                 ];
             }
@@ -188,14 +189,14 @@ class RegisterService
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Erro ao buscar Guilda.',
+                'message' => 'Erro ao buscar Player.',
                 'error' => $e->getMessage(),
                 'status_code' => 500
             ];
         }
     }
 
-    public function getPlayerByIdAndConfirm($id) 
+    public function getPlayerByIdAndConfirm($id): array 
     {
         try {
             $confirm = $this->userRepository->findByIdAndConfirm($id);
@@ -222,7 +223,7 @@ class RegisterService
         }
     }
 
-    public function getPlayerByIdAndNoConfirm($id) 
+    public function getPlayerByIdAndNoConfirm($id): array 
     {
         try {
             $confirm = $this->userRepository->findByIdAndNoConfirm($id);
@@ -247,5 +248,18 @@ class RegisterService
                 'status_code' => 500
             ];
         }
+    }
+
+    /**
+     * Retorna todos os jogadores com o status de confirmação formatado.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAllWithConfirmationStatus(): Collection
+    {
+        return $this->userRepository->getAllPlayers()->map(function ($player) {
+            $player->confirmed = $player->confirmed ? 'Sim' : 'Não';
+            return $player;
+        });
     }
 }

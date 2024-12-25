@@ -23,7 +23,10 @@
             <input type="text" id="min_players" name="min_players" class="form-control" value="{{ old('min_players', $guild->min_players) }}" required>
         </div>
 
-        <button type="submit" class="btn btn-primary">Atualizar</button>
+        <div class="d-flex mt-3">
+            <button type="submit" class="btn btn-primary me-2">Atualizar</button>
+            <a href="{{ route('home') }}" class="btn btn-secondary">Voltar</a>
+        </div>
     </form>
 </div>
 @endsection

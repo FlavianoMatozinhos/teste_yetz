@@ -24,11 +24,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/players/confirm/{id}', [RegisterController::class, 'confirm'])->name('player.confirm');
     Route::get('/players/noconfirm/{id}', [RegisterController::class, 'noconfirm'])->name('player.noconfirm');
 
-    
     Route::get('/guild/create', [GuildController::class, 'index'])->name('guild.create');
     Route::post('/guild', [GuildController::class, 'store'])->name('guild.store');
     Route::get('/guild/{id}', [GuildController::class, 'show'])->name('guild.show');
-    Route::get('/guild/{id}/edit', [GuildController::class, 'edit'])->name('guild.edit');
+    Route::get('/guild/edit/{id}', [GuildController::class, 'edit'])->name('guild.edit');
     Route::put('/guild/{id}', [GuildController::class, 'update'])->name('guild.update');
     Route::delete('/guild/{id}', [GuildController::class, 'destroy'])->name('guild.destroy');
 

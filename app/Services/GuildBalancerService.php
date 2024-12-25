@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Guild;
 use App\Models\User;
 use App\Repositories\GuildRepository;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ class GuildBalancerService
         $this->guildRepository = $guildRepository;
     }
 
-    public function balanceGuilds($guilds, $players)
+    public function balanceGuilds($guilds, $players): bool
     {
         try {
             $players = $players->sortByDesc('xp');
@@ -55,7 +56,7 @@ class GuildBalancerService
         }
     }
 
-    private function findGuildWithLeastXP($guildPlayerCounts, $guilds, $player)
+    private function findGuildWithLeastXP($guildPlayerCounts, $guilds, $player): mixed
     {
         $guildXP = [];
 
@@ -76,7 +77,7 @@ class GuildBalancerService
         return null;
     }
 
-    private function calculateTotalXPForGuild($guild)
+    private function calculateTotalXPForGuild($guild): mixed
     {
         $players = User::where('guild_id', $guild->id)->get();
         return $players->sum('xp');
@@ -112,7 +113,7 @@ class GuildBalancerService
         }
     }
 
-    public function createGuild(array $data)
+    public function createGuild(array $data): mixed
     {    
         try {
             $validator = validator($data, [
@@ -120,37 +121,34 @@ class GuildBalancerService
                 'min_players' => 'required|integer|min:1',
                 'max_players' => 'required|integer|min:1|gte:min_players',
             ]);
-
+            
             if ($this->guildRepository->existsByName($data['name'])) {
-                return response()->json([
+                return [
                     'status' => 'error',
-                    'message' => 'Já existe uma classe com esse nome.',
+                    'errors' => $validator->errors(),
                     'status_code' => 400,
-                    'data' => null
-                ], 400);
+                ];
             }
             
             if ($validator->fails()) {
-                return response()->json([
+                return [
                     'status' => 'error',
                     'message' => 'Dados inválidos.',
                     'errors' => $validator->errors(),
                     'status_code' => 422,
                     'data' => null
-                ], 422);
+                ];
             }
-    
-            $guildData = $data;
-            $guildData['user_id'] = Auth::id();
-    
-            $this->guildRepository->createGuild($guildData);
-    
-            return response()->json([
+            
+            $data['user_id'] = Auth::id();
+
+            $guild = $this->guildRepository->createGuild($data);
+
+
+            return [
                 'status' => 'success',
-                'message' => 'Guilda criada com sucesso!',
-                'status_code' => 200,
-                'data' => $guildData
-            ], 200);
+                'data' => $guild
+            ];
     
         } catch (Exception $e) {
             return response()->json([
@@ -164,7 +162,7 @@ class GuildBalancerService
     }
     
 
-    public function getGuildById($id)
+    public function getGuildById($id): array
     {
         try {
             $class = $this->guildRepository->findGuildById($id);
@@ -191,7 +189,7 @@ class GuildBalancerService
         }
     }
 
-    public function updateGuild($id, array $data)
+    public function updateGuild($id, array $data): array
     {
         try {
             $validator = validator($data, [
@@ -218,11 +216,12 @@ class GuildBalancerService
                 ];
             }
 
-            $updatedClass = $this->guildRepository->update($id, $data);
+            $this->guildRepository->update($id, $data);
 
             return [
                 'status' => 'success',
-                'data' => $updatedClass
+                'data' => ['message' => 'Guilda atualizada com sucesso.'],
+                'status_code' => 200,
             ];
         } catch (Exception $e) {
             return [
@@ -234,32 +233,78 @@ class GuildBalancerService
         }
     }
 
-    public function deleteGuild($id)
+    public function deleteGuild($id): array
     {
         try {
+            $guild = $this->guildRepository->findGuildById($id);
+
+            if (!$guild) {
+                return [
+                    'status' => 'error',
+                    'data' => ['message' => 'Guilda não encontrado.'],
+                    'status_code' => 404,
+                ];
+            }
+
             $this->guildRepository->delete($id);
-            return ['status' => 'success', 'data' => null];
-        } catch (Exception $e) {
+
+            return [
+                'status' => 'success',
+                'data' => ['message' => 'Guilda excluída com sucesso.'],
+                'status_code' => 200,
+            ];
+        } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Erro ao excluir Guilda.',
-                'error' => $e->getMessage(),
+                'data' => ['message' => 'Erro ao excluir o Guilda.', 'error' => $e->getMessage()],
                 'status_code' => 500,
-                'data' => null
             ];
         }
     }
 
-    public function getPlayersByGuildId($guildId)
-{
-    try {
-        $players = $this->guildRepository->getPlayersByGuildId($guildId);
+    public function getPlayersByGuildId($guildId): Collection
+    {
+        try {
+            $players = $this->guildRepository->getPlayersByGuildId($guildId);
 
-        return $players;
-    } catch (\Exception $e) {
-        Log::error("Erro ao buscar jogadores da guilda {$guildId}: {$e->getMessage()}");
-        throw $e;
+            return $players;
+        } catch (\Exception $e) {
+            Log::error("Erro ao buscar jogadores da guilda {$guildId}: {$e->getMessage()}");
+            throw $e;
+        }
     }
-}
 
+    /**
+     * Obtém o status de confirmação de uma guilda.
+     *
+     * @param Guild $guild
+     * @return string
+     */
+    public function getGuildConfirmationStatus(Guild $guild): string
+    {
+        if ($guild->players->isEmpty()) {
+            return 'Sem Players';
+        }
+
+        $allConfirmed = $guild->players->every(function ($player) {
+            return $player->confirmed == 1;
+        });
+
+        return $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
+    }
+
+    /**
+     * Retorna todas as guildas com os jogadores e seu status de confirmação.
+     *
+     * @return Collection
+     */
+    public function getAllWithConfirmationStatus(): Collection
+    {
+        return Guild::with('players')
+            ->get()
+            ->map(function ($guild) {
+                $guild->confirmation_status = $this->getGuildConfirmationStatus($guild);
+                return $guild;
+            });
+    }
 }

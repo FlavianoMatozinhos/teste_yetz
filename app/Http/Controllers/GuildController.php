@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Repositories\GuildRepository;
 use App\Services\GuildBalancerService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\View\View;
 
 /**
  * @OA\Schema(
@@ -43,7 +46,7 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function balance()
+    public function balance(): RedirectResponse
     {
         try {
             $guilds = $this->guildRepository->getAllGuilds();
@@ -75,7 +78,7 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         try {
             $guilds = $this->guildRepository->getAllGuilds();
@@ -110,30 +113,30 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $result = $this->guildBalancerService->createGuild($request->all());
 
-        $responseData = $result->getData();
+        if ($result['status'] === 'error') {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'errors' => $result['errors']
+                ], 400);
+            }
 
-        $status = $responseData->status;
-
-        if ($status === 'error') {
-            return response()->json([ 
-                'status' => 'error', 
-                'message' => $responseData->message, 
-                'status_code' => $responseData->status_code, 
-            ], $responseData->status_code);
+            return redirect()->back()->withErrors($result['errors']);
         }
 
-        return response()->json(
-            [
+        if ($request->expectsJson()) {
+            return response()->json([
                 'status' => 'success',
-                'message' => 'Guilda criada com sucesso.',
-                // 'data' => $result['data'],
-            ],
-            201
-        );
+                'message' => 'Guilda criada com sucesso.'
+            ], 201);
+        }
+
+        return redirect('/')->with('success', 'Guilda criada com sucesso.');
+
     }
 
     /**
@@ -159,7 +162,7 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function show($id)
+    public function show($id): JsonResponse|View
     {
         $result = $this->guildBalancerService->getGuildById($id);
 
@@ -204,14 +207,16 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function edit($id)
+    public function edit($id): View|RedirectResponse
     {
         try {
-            $guild = $this->guildRepository->findGuildById($id);
-
-            if (!$guild) {
+            $result = $this->guildBalancerService->getGuildById($id);
+            
+            if (!$result['status'] === 'error') {
                 return redirect()->route('home')->with('error', 'Guilda não encontrada.');
             }
+
+            $guild = $result['data'];
 
             return view('guild.update', compact('guild'));
         } catch (Exception $e) {
@@ -247,28 +252,29 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): mixed
     {
         $result = $this->guildBalancerService->updateGuild($id, $request->all());
 
         if ($result['status'] === 'error') {
-            return response()->json(
-                [
-                    'message' => $result['message'],
-                    'errors' => $result['errors'] ?? null,
-                    'status_code' => $result['status_code'],
-                ],
-                $result['status_code']
-            );
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'errors' => $result['errors'] ?? $result['data']
+                ], $result['status_code']);
+            }
+
+            return redirect()->back()->with('error', $result['message']);
         }
 
-        return response()->json(
-            [
-                'data' => $result['data'],
-                'message' => 'Guilda atualizada com sucesso.',
-            ],
-            200
-        );
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $result['data']['message']
+            ], $result['status_code']);
+        }
+
+        return redirect()->back()->with('success', $result['data']['message']);
     }
 
     /**
@@ -296,6 +302,7 @@ class GuildController extends Controller
     public function destroy($id)
     {
         $result = $this->guildBalancerService->deleteGuild($id);
+
         if ($result['status'] === 'error') {
             return response()->json(
                 [
@@ -307,11 +314,6 @@ class GuildController extends Controller
             );
         }
 
-        return response()->json(
-            [
-                'message' => 'Guilda deletada com sucesso.',
-            ],
-            204
-        );
+        return redirect()->back()->with('success', $result['data']['message']);
     }
 }

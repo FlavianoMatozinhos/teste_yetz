@@ -66,8 +66,11 @@
                         <label for="password_confirmation" class="form-label">Confirmar Senha</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+         
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary me-2">Cadastrar</button>
+                        <a href="{{ route('login') }}" class="btn btn-secondary">Voltar</a>
+                    </div>
                 </form>
             </div>
         </div>

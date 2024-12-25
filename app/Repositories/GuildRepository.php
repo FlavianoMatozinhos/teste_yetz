@@ -40,40 +40,6 @@ class GuildRepository
     }
 
     /**
-     * Retorna todas as guildas com os jogadores e seu status de confirmação.
-     *
-     * @return Collection
-     */
-    public function getAllWithConfirmationStatus(): Collection
-    {
-        return Guild::with('players')
-            ->get()
-            ->map(function ($guild) {
-                $guild->confirmation_status = $this->getGuildConfirmationStatus($guild);
-                return $guild;
-            });
-    }
-
-    /**
-     * Obtém o status de confirmação de uma guilda.
-     *
-     * @param Guild $guild
-     * @return string
-     */
-    public function getGuildConfirmationStatus(Guild $guild): string
-    {
-        if ($guild->players->isEmpty()) {
-            return 'Sem Players';
-        }
-
-        $allConfirmed = $guild->players->every(function ($player) {
-            return $player->confirmed == 1;
-        });
-
-        return $allConfirmed ? 'Todos confirmados' : 'Jogadores pendentes';
-    }
-
-    /**
      * Conta o número de guildas.
      *
      * @return int
@@ -89,9 +55,21 @@ class GuildRepository
      * @param array $data
      * @return Guild
      */
-    public function createGuild(array $data): Guild
+    public function createGuild(array $data): array
     {
-        return Guild::create($data);
+        DB::beginTransaction();
+
+        try {
+
+            $guild = Guild::create($data);
+
+            DB::commit();
+
+            return ['status' => 'success', 'guild' => $guild];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ['status' => 'error', 'errors' => ['general' => $e->getMessage()]];
+        }
     }
 
     /**
@@ -115,10 +93,11 @@ class GuildRepository
      */
     public function findGuildById(int $id): ?Guild
     {
+        
         return Guild::findOrFail($id);
     }
 
-    protected function validateGuildId($guildId)
+    protected function validateGuildId($guildId): bool
     {
         return Guild::where('id', $guildId)->exists();
     }
@@ -130,14 +109,14 @@ class GuildRepository
         return $class;
     }
 
-    public function existsByName($name)
+    public function existsByName($name): bool
     {
         $query = Guild::where('name', $name);
 
         return $query->exists();
     }
 
-    public function getPlayersByGuildId($guildId)
+    public function getPlayersByGuildId($guildId): Collection
     {
         return User::where('guild_id', $guildId)->with('class')->get();
     }

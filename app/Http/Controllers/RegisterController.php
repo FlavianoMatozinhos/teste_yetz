@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Services\RegisterService;
 use App\Services\ClassService;
 use App\Services\GuildBalancerService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
@@ -40,7 +41,7 @@ class RegisterController extends Controller
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $players = $this->registerService->getAllPlayers();
         $classesResult = $this->registerService->getAllClasses();
@@ -89,7 +90,7 @@ class RegisterController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request): View|RedirectResponse
     {
         $result = $this->registerService->registerUser($request->all());
 
@@ -114,7 +115,7 @@ class RegisterController extends Controller
         return redirect('/login')->with('success', 'Registro realizado com sucesso! Faça login para continuar.');
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $result = $this->registerService->getPlayerById($id);
 
@@ -134,7 +135,7 @@ class RegisterController extends Controller
         return view('player.show', compact('player'));
     }
 
-    public function edit($id)
+    public function edit($id): View
     {
         $playerResult = $this->registerService->getPlayerById($id);
         $player = $playerResult['data'];
@@ -148,7 +149,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function confirm($id)
+    public function confirm($id): RedirectResponse
     {
         try {
             $this->registerService->getPlayerByIdAndConfirm($id);
@@ -160,7 +161,7 @@ class RegisterController extends Controller
         }
     }
 
-    public function noconfirm($id)
+    public function noconfirm($id): RedirectResponse
     {
         try {
             $this->registerService->getPlayerByIdAndNoConfirm($id);
@@ -203,12 +204,10 @@ class RegisterController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
-        // Remover o campo '_token' dos dados antes de passar para o serviço
         $data = $request->except(['_token', '_method']);
 
-        // Passar os dados filtrados para o serviço de atualização
         $result = $this->registerService->updateUser($id, $data);
 
         if ($result['status'] === 'error') {
@@ -219,7 +218,7 @@ class RegisterController extends Controller
                 ], $result['status_code']);
             }
 
-            return redirect()->back()->withErrors($result['errors'] ?? $result['data']['message']);
+            return redirect()->back()->with('error', $result['message']);
         }
 
         if ($request->expectsJson()) {
@@ -264,21 +263,22 @@ class RegisterController extends Controller
      *     )
      * )
      */
-    public function destroy($id)
+    public function destroy($id): mixed
     {
         $result = $this->registerService->deleteUser($id);
 
         if ($result['status'] === 'error') {
-            return response()->json([
-                'status' => 'error',
-                'message' => $result['data']['message'],
-                'error' => $result['data']['error'] ?? null,
-            ], $result['status_code']);
+            return response()->json(
+                [
+                    'message' => $result['message'],
+                    'error' => $result['error'] ?? null,
+                    'status_code' => $result['status_code'],
+                ],
+                $result['status_code']
+            );
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => $result['data']['message'],
-        ], $result['status_code']);
+        return redirect()->back()->with('success', $result['data']['message']);
     }
+
 }

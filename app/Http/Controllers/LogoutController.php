@@ -41,7 +41,7 @@ class LogoutController extends Controller
      *     )
      * )
      */
-    public function logout(Request $request)
+    public function logout(Request $request): mixed
     {
         $result = $this->logoutService->logoutUser($request->user());
 

@@ -3,38 +3,22 @@
 @section('content')
 
 <div class="container mt-5">
-    <h2>Home</h2>
-
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if (session('warning'))
-        <div class="alert alert-warning">
-            {{ session('warning') }}
-        </div>
-    @endif
-
     @if (Auth::user()->role_id === 1)
-        <a href="{{ route('guild.create') }}" class="btn btn-success mb-3">Criar Guilda</a>
-        <form method="POST" action="{{ route('balance') }}">
-            @csrf
-            <button type="submit" class="btn btn-primary">Balancear Guildas</button>
-        </form>      
+        <div class="d-flex gap-2 buttons__guilda">
+            <a href="{{ route('guild.create') }}">
+                <button type="button" class="btn btn-success w-100">Criar Guilda</button>
+            </a>
+            <form method="POST" action="{{ route('balance') }}">
+                @csrf
+                <button type="submit" class="btn btn-primary w-100">Balancear Guildas</button>
+            </form>
+        </div>
     @endif
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row mt-5">
+        <div class="col">
             <h3>Guildas</h3>
-            <table class="table table-bordered">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -52,13 +36,9 @@
                             <td>{{ $guild->max_players }}</td>
                             <td>{{ $guild->confirmation_status }}</td>
                             <td>
-                                <!-- Botão para Visualizar -->
                                 <a href="{{ route('guild.show', $guild->id) }}" class="btn btn-sm btn-info">Visualizar</a>
                                 @if (Auth::user()->role_id === 1) 
-                                    <!-- Botão para Editar -->
-                                    <a href="{{ route('guild.update', $guild->id) }}" class="btn btn-sm btn-warning">Editar</a>
-                                    
-                                    <!-- Formulário para Excluir -->
+                                    <a href="{{ route('guild.edit', $guild->id) }}" class="btn btn-sm btn-warning">Editar</a>
                                     <form action="{{ route('guild.destroy', $guild->id) }}" method="POST" style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
@@ -71,10 +51,12 @@
                 </tbody>
             </table>
         </div>
+    </div>
 
-        <div class="col-md-6">
+    <div class="row mt-5">
+        <div class="col">
             <h3>Players</h3>
-            <table class="table table-bordered">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Nome</th>

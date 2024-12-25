@@ -38,7 +38,10 @@
                 <input type="number" class="form-control" id="max_players" name="max_players" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Criar Guilda</button>
+            <div class="d-flex">
+                <button type="submit" class="btn btn-primary me-2">Criar Guilda</button>
+                <a href="{{ route('home') }}" class="btn btn-secondary">Voltar</a>
+            </div>
         </form>
     @endif
 </div>

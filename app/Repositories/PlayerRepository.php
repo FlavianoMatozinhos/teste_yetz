@@ -6,6 +6,8 @@ use App\Models\Classe;
 use App\Models\Guild;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,7 +30,7 @@ class PlayerRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getConfirmedPlayers()
+    public function getConfirmedPlayers(): Collection
     {
         return $this->model->where('confirmed', true)->get();
     }
@@ -39,7 +41,7 @@ class PlayerRepository
      * @param int $classId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getPlayersByClass($classId)
+    public function getPlayersByClass($classId): Collection
     {
         return $this->model->where('class_id', $classId)->get();
     }
@@ -49,22 +51,9 @@ class PlayerRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAllPlayers()
+    public function getAllPlayers(): Collection
     {
         return $this->model->all();
-    }
-
-    /**
-     * Retorna todos os jogadores com o status de confirmação formatado.
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getAllWithConfirmationStatus()
-    {
-        return $this->model->all()->map(function ($player) {
-            $player->confirmed = $player->confirmed ? 'Sim' : 'Não';
-            return $player;
-        });
     }
 
     /**
@@ -72,7 +61,7 @@ class PlayerRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getPlayersByXP()
+    public function getPlayersByXP(): Collection
     {
         return $this->model->orderBy('xp', 'desc')->get();
     }
@@ -83,7 +72,7 @@ class PlayerRepository
      * @param array $data
      * @return array
      */
-    public function createPlayer(array $data)
+    public function createPlayer(array $data): array
     {
         DB::beginTransaction();
 
@@ -115,7 +104,7 @@ class PlayerRepository
      * @param string $email
      * @return User|null
      */
-    public function findByEmail($email)
+    public function findByEmail($email): Model
     {
         return $this->model->where('email', $email)->first();
     }
@@ -126,7 +115,7 @@ class PlayerRepository
      * @param int $id
      * @return User|null
      */
-    public function findById($id)
+    public function findById($id): Model
     {
         return $this->model->find($id);
     }
@@ -138,7 +127,7 @@ class PlayerRepository
      * @param array $data
      * @return bool
      */
-    public function updatePlayer($id, array $data)
+    public function updatePlayer($id, array $data): bool
     {
         unset($data['password_confirmation']);
 
@@ -151,13 +140,13 @@ class PlayerRepository
      * @param int $id
      * @return bool
      */
-    public function deletePlayer($id)
+    public function deletePlayer($id): bool|null
     {
         DB::table('guilds')->where('user_id', $id)->update(['user_id' => null]);
         return $this->model->where('id', $id)->delete();
     }
 
-    public function getGuildByPlayerId($id)
+    public function getGuildByPlayerId($id): array
     {
         $player = $this->model->with('guild')->find($id);
         
@@ -174,12 +163,12 @@ class PlayerRepository
         ];
     }
 
-    public function findByIdAndConfirm($id)
+    public function findByIdAndConfirm($id): bool
     {
         return $this->model->where('id', $id)->update(['confirmed' => true]);
     }
 
-    public function findByIdAndNoConfirm($id)
+    public function findByIdAndNoConfirm($id): bool
     {
         return $this->model->where('id', $id)->update(['confirmed' => false]);
     }

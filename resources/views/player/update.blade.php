@@ -2,26 +2,6 @@
 
 @section('content')
 <div class="container">
-
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if (session('warning'))
-        <div class="alert alert-warning">
-            {{ session('warning') }}
-        </div>
-    @endif
-
-
     <div class="row">
         <div class="col-md-6">
             <h3>Editar Perfil do Jogador</h3>
@@ -59,8 +39,12 @@
                     <input type="text" name="xp" id="xp" class="form-control" value="{{ old('xp', $player->xp) }}" required>
                 </div>
 
-                <button type="submit" class="btn btn-success">Salvar Alterações</button>
-                <a href="{{ route('player.show', $player->id) }}" class="btn btn-secondary">Voltar</a>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                        <a href="{{ route('player.show', $player->id) }}" class="btn btn-primary">Voltar</a>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

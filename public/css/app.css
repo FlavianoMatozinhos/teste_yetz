@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.buttons__guilda {
+    max-width: 300px;
+}
+
+.table.table-striped thead tr th {
+    width: 20%;
+}

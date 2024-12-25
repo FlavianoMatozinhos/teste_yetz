@@ -12,6 +12,7 @@
                         <th>Classe</th>
                         <th>Guilda</th>
                         <th>Confirmado</th>
+                        <th>Açao</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,17 +21,18 @@
                         <td>{{ $player->class ? $player->class->name : 'Sem Classe' }}</td>
                         <td>{{ $player->guild ? $player->guild->name : 'Sem Guilda' }}</td>
                         <td>{{ $player->confirmed ? 'Sim' : 'Não' }}</td>
+                        <td>
+                            <a href="{{ route('player.edit', $player->id) }}" class="btn btn-success">Editar Jogador</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Botão de Editar -->
     <div class="row mt-3">
         <div class="col-md-12">
-            <a href="{{ route('home') }}" class="btn btn-primary">Voltar para a lista de jogadores</a>
-            <a href="{{ route('player.edit', $player->id) }}" class="btn btn-warning">Editar Jogador</a>
+            <a href="{{ route('home') }}" class="btn btn-primary">Voltar</a>
         </div>
     </div>
 </div>

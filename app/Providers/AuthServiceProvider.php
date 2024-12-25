@@ -5,7 +5,7 @@ use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         $this->registerPolicies();
     

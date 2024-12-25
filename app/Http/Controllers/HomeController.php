@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\GuildBalancerService;
-use App\Repositories\GuildRepository;
-use App\Repositories\PlayerRepository;
-use Illuminate\Http\Request;
+use App\Services\RegisterService;
 
 /**
  * @OA\Info(title="API Home", version="1.0.0")
@@ -26,27 +24,24 @@ use Illuminate\Http\Request;
  */
 class HomeController extends Controller
 {
-    protected $guildRepository;
-    protected $playerRepository;
+    protected $registerService;
     protected $guildBalancerService;
 
-    public function __construct(GuildRepository $guildRepository, PlayerRepository $playerRepository, GuildBalancerService $guildBalancerService)
+    public function __construct(RegisterService $registerService, GuildBalancerService $guildBalancerService)
     {
-        $this->guildRepository = $guildRepository;
-        $this->playerRepository = $playerRepository;
+        $this->registerService = $registerService;
         $this->guildBalancerService = $guildBalancerService;
     }
 
-    public function index()
+    public function index(): mixed
     {
-        $guilds = $this->guildRepository->getAllWithConfirmationStatus();
-        $players = $this->playerRepository->getAllWithConfirmationStatus();
+        $guilds = $this->guildBalancerService->getAllWithConfirmationStatus();
+        $players = $this->registerService->getAllWithConfirmationStatus();
 
         $data = [
             'message' => 'Bem-vindo à Home!',
             'guilds' => $guilds,
             'players' => $players,
-            'numGuildas' => $this->guildRepository->countGuilds(),
         ];
 
         return view('home', $data);

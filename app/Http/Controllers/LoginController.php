@@ -26,7 +26,7 @@ class LoginController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(): mixed
     {
         return view('auth.login');
     }
@@ -64,7 +64,7 @@ class LoginController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $validated = $request->validate([
             'email' => 'required|email',
