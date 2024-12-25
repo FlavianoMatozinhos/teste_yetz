@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ClassService;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
-
+use Exception;
 
 class ClassController extends Controller
 {
@@ -33,28 +33,35 @@ class ClassController extends Controller
      *     @OA\Response(response=400, description="Erro")
      * )
      */
-    public function index(): Json
+    public function index()
     {
-        $result = $this->classService->getAllClasses();
+        try {
+            $result = $this->classService->getAllClasses();
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                return response()->json(
+                    [
+                        'message' => $result['message'],
+                        'status_code' => $result['status_code'],
+                        'error' => $result['error'] ?? null,
+                    ],
+                    $result['status_code']
+                );
+            }
+
             return response()->json(
                 [
-                    'message' => $result['message'],
-                    'status_code' => $result['status_code'],
-                    'error' => $result['error'] ?? null,
+                    'data' => $result['data'],
+                    'message' => 'Classes listadas com sucesso.',
                 ],
-                $result['status_code']
+                200
             );
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao listar classes: ' . $e->getMessage(),
+                'status_code' => 500
+            ], 500);
         }
-
-        return response()->json(
-            [
-                'data' => $result['data'],
-                'message' => 'Classes listadas com sucesso.',
-            ],
-            200
-        );
     }
 
     /**
@@ -81,28 +88,35 @@ class ClassController extends Controller
      *     @OA\Response(response=400, description="Erro")
      * )
      */
-    public function store(Request $request): Json
+    public function store(Request $request)
     {
-        $result = $this->classService->createClass($request->all());
+        try {
+            $result = $this->classService->createClass($request->all());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                return response()->json(
+                    [
+                        'message' => $result['message'],
+                        'errors' => $result['errors'] ?? null,
+                        'status_code' => $result['status_code'],
+                    ],
+                    $result['status_code']
+                );
+            }
+
             return response()->json(
                 [
-                    'message' => $result['message'],
-                    'errors' => $result['errors'] ?? null,
-                    'status_code' => $result['status_code'],
+                    'data' => $result['data'],
+                    'message' => 'Classe criada com sucesso.',
                 ],
-                $result['status_code']
+                201
             );
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao criar classe: ' . $e->getMessage(),
+                'status_code' => 500
+            ], 500);
         }
-
-        return response()->json(
-            [
-                'data' => $result['data'],
-                'message' => 'Classe criada com sucesso.',
-            ],
-            201
-        );
     }
 
     /**
@@ -128,28 +142,35 @@ class ClassController extends Controller
      *     @OA\Response(response=404, description="Classe não encontrada")
      * )
      */
-    public function show($id): Json
+    public function show($id)
     {
-        $result = $this->classService->getClassById($id);
+        try {
+            $result = $this->classService->getClassById($id);
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                return response()->json(
+                    [
+                        'message' => $result['message'],
+                        'status_code' => $result['status_code'],
+                        'error' => $result['error'] ?? null,
+                    ],
+                    $result['status_code']
+                );
+            }
+
             return response()->json(
                 [
-                    'message' => $result['message'],
-                    'status_code' => $result['status_code'],
-                    'error' => $result['error'] ?? null,
+                    'data' => $result['data'],
+                    'message' => 'Classe encontrada com sucesso.',
                 ],
-                $result['status_code']
+                200
             );
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao exibir classe: ' . $e->getMessage(),
+                'status_code' => 500
+            ], 500);
         }
-
-        return response()->json(
-            [
-                'data' => $result['data'],
-                'message' => 'Classe encontrada com sucesso.',
-            ],
-            200
-        );
     }
 
     /**
@@ -182,28 +203,35 @@ class ClassController extends Controller
      *     @OA\Response(response=400, description="Erro")
      * )
      */
-    public function update(Request $request, $id): Json
+    public function update(Request $request, $id)
     {
-        $result = $this->classService->updateClass($id, $request->all());
+        try {
+            $result = $this->classService->updateClass($id, $request->all());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                return response()->json(
+                    [
+                        'message' => $result['message'],
+                        'errors' => $result['errors'] ?? null,
+                        'status_code' => $result['status_code'],
+                    ],
+                    $result['status_code']
+                );
+            }
+
             return response()->json(
                 [
-                    'message' => $result['message'],
-                    'errors' => $result['errors'] ?? null,
-                    'status_code' => $result['status_code'],
+                    'data' => $result['data'],
+                    'message' => 'Classe atualizada com sucesso.',
                 ],
-                $result['status_code']
+                200
             );
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao atualizar classe: ' . $e->getMessage(),
+                'status_code' => 500
+            ], 500);
         }
-
-        return response()->json(
-            [
-                'data' => $result['data'],
-                'message' => 'Classe atualizada com sucesso.',
-            ],
-            200
-        );
     }
 
     /**
@@ -224,26 +252,33 @@ class ClassController extends Controller
      *     @OA\Response(response=404, description="Classe não encontrada")
      * )
      */
-    public function destroy($id): Json
+    public function destroy($id)
     {
-        $result = $this->classService->deleteClass($id);
+        try {
+            $result = $this->classService->deleteClass($id);
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                return response()->json(
+                    [
+                        'message' => $result['message'],
+                        'error' => $result['error'] ?? null,
+                        'status_code' => $result['status_code'],
+                    ],
+                    $result['status_code']
+                );
+            }
+
             return response()->json(
                 [
-                    'message' => $result['message'],
-                    'error' => $result['error'] ?? null,
-                    'status_code' => $result['status_code'],
+                    'message' => 'Classe deletada com sucesso.',
                 ],
-                $result['status_code']
+                204
             );
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao deletar classe: ' . $e->getMessage(),
+                'status_code' => 500
+            ], 500);
         }
-
-        return response()->json(
-            [
-                'message' => 'Classe deletada com sucesso.',
-            ],
-            204
-        );
     }
 }

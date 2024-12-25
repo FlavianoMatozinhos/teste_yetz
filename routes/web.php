@@ -24,12 +24,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/players/confirm/{id}', [RegisterController::class, 'confirm'])->name('player.confirm');
     Route::get('/players/noconfirm/{id}', [RegisterController::class, 'noconfirm'])->name('player.noconfirm');
 
-    Route::get('/guild/create', [GuildController::class, 'index'])->name('guild.create');
-    Route::post('/guild', [GuildController::class, 'store'])->name('guild.store');
-    Route::get('/guild/{id}', [GuildController::class, 'show'])->name('guild.show');
-    Route::get('/guild/edit/{id}', [GuildController::class, 'edit'])->name('guild.edit');
-    Route::put('/guild/{id}', [GuildController::class, 'update'])->name('guild.update');
-    Route::delete('/guild/{id}', [GuildController::class, 'destroy'])->name('guild.destroy');
+    Route::get('/guilds/create', [GuildController::class, 'index'])->name('guild.create');
+    Route::post('/guilds', [GuildController::class, 'store'])->name('guild.store');
+    Route::get('/guilds/{id}', [GuildController::class, 'show'])->name('guild.show');
+    Route::get('/guilds/edit/{id}', [GuildController::class, 'edit'])->name('guild.edit');
+    Route::put('/guilds/{id}', [GuildController::class, 'update'])->name('guild.update');
+    Route::delete('/guilds/{id}', [GuildController::class, 'destroy'])->name('guild.destroy');
 
     Route::post('/guilds/balance', [GuildController::class, 'balance'])->name('balance');
 });

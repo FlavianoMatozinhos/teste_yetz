@@ -46,7 +46,7 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function balance(): RedirectResponse
+    public function balance()
     {
         try {
             $guilds = $this->guildRepository->getAllGuilds();
@@ -78,7 +78,7 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
         try {
             $guilds = $this->guildRepository->getAllGuilds();
@@ -113,30 +113,40 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function store(Request $request): mixed
+    public function store(Request $request)
     {
-        $result = $this->guildBalancerService->createGuild($request->all());
+        try {
+            $result = $this->guildBalancerService->createGuild($request->all());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'errors' => $result['errors']
+                    ], 400);
+                }
+
+                return redirect()->back()->withErrors($result['errors']);
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Guilda criada com sucesso.'
+                ], 201);
+            }
+
+            return redirect('/')->with('success', 'Guilda criada com sucesso.');
+        } catch (Exception $e) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'errors' => $result['errors']
-                ], 400);
+                    'message' => 'Erro ao criar guilda: ' . $e->getMessage()
+                ], 500);
             }
 
-            return redirect()->back()->withErrors($result['errors']);
+            return redirect()->back()->with('error', 'Erro ao criar guilda: ' . $e->getMessage());
         }
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Guilda criada com sucesso.'
-            ], 201);
-        }
-
-        return redirect('/')->with('success', 'Guilda criada com sucesso.');
-
     }
 
     /**
@@ -162,26 +172,29 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function show($id): JsonResponse|View
+    public function show($id)
     {
-        $result = $this->guildBalancerService->getGuildById($id);
+        try {
+            $result = $this->guildBalancerService->getGuildById($id);
 
-        if ($result['status'] === 'error') {
-            return response()->json(
-                [
-                    'message' => $result['message'],
-                    'status_code' => $result['status_code'],
-                    'error' => $result['error'] ?? null,
-                ],
-                $result['status_code']
-            );
+            if ($result['status'] === 'error') {
+                return response()->json(
+                    [
+                        'message' => $result['message'],
+                        'status_code' => $result['status_code'],
+                        'error' => $result['error'] ?? null,
+                    ],
+                    $result['status_code']
+                );
+            }
+
+            $guild = $result['data'];
+            $players = $this->guildBalancerService->getPlayersByGuildId($id);
+
+            return view('guild.show', compact('guild', 'players'));
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Erro ao exibir guilda: ' . $e->getMessage()], 500);
         }
-
-        $guild = $result['data'];
-
-        $players = $this->guildBalancerService->getPlayersByGuildId($id);
-
-        return view('guild.show', compact('guild', 'players'));
     }
 
     /**
@@ -207,23 +220,21 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function edit($id): View|RedirectResponse
+    public function edit($id)
     {
         try {
             $result = $this->guildBalancerService->getGuildById($id);
             
-            if (!$result['status'] === 'error') {
+            if ($result['status'] === 'error') {
                 return redirect()->route('home')->with('error', 'Guilda não encontrada.');
             }
 
             $guild = $result['data'];
-
             return view('guild.update', compact('guild'));
         } catch (Exception $e) {
             return redirect()->route('home')->with('error', 'Erro ao carregar a guilda: ' . $e->getMessage());
         }
     }
-
 
     /**
      * @OA\Put(
@@ -252,29 +263,33 @@ class GuildController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, $id): mixed
+    public function update(Request $request, $id)
     {
-        $result = $this->guildBalancerService->updateGuild($id, $request->all());
+        try {
+            $result = $this->guildBalancerService->updateGuild($id, $request->all());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'errors' => $result['errors'] ?? $result['data']
+                    ], $result['status_code']);
+                }
+
+                return redirect()->back()->with('error', $result['message']);
+            }
+
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status' => 'error',
-                    'errors' => $result['errors'] ?? $result['data']
+                    'status' => 'success',
+                    'message' => $result['data']['message']
                 ], $result['status_code']);
             }
 
-            return redirect()->back()->with('error', $result['message']);
+            return redirect()->back()->with('success', $result['data']['message']);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Erro ao atualizar guilda: ' . $e->getMessage()], 500);
         }
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => $result['data']['message']
-            ], $result['status_code']);
-        }
-
-        return redirect()->back()->with('success', $result['data']['message']);
     }
 
     /**
@@ -301,19 +316,15 @@ class GuildController extends Controller
      */
     public function destroy($id)
     {
-        $result = $this->guildBalancerService->deleteGuild($id);
+        try {
+            $result = $this->guildBalancerService->deleteGuild($id);
 
-        if ($result['status'] === 'error') {
-            return response()->json(
-                [
-                    'message' => $result['message'],
-                    'error' => $result['error'] ?? null,
-                    'status_code' => $result['status_code'],
-                ],
-                $result['status_code']
-            );
+            return redirect()->back()->with('success', $result['data']['message']);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao deletar guilda: ' . $e->getMessage()
+            ], 500);
         }
-
-        return redirect()->back()->with('success', $result['data']['message']);
     }
 }

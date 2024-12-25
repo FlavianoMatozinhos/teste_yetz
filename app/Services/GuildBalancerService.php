@@ -22,7 +22,7 @@ class GuildBalancerService
         $this->guildRepository = $guildRepository;
     }
 
-    public function balanceGuilds($guilds, $players): bool
+    public function balanceGuilds($guilds, $players)
     {
         try {
             $players = $players->sortByDesc('xp');
@@ -56,7 +56,7 @@ class GuildBalancerService
         }
     }
 
-    private function findGuildWithLeastXP($guildPlayerCounts, $guilds, $player): mixed
+    private function findGuildWithLeastXP($guildPlayerCounts, $guilds, $player)
     {
         $guildXP = [];
 
@@ -77,7 +77,7 @@ class GuildBalancerService
         return null;
     }
 
-    private function calculateTotalXPForGuild($guild): mixed
+    private function calculateTotalXPForGuild($guild)
     {
         $players = User::where('guild_id', $guild->id)->get();
         return $players->sum('xp');
@@ -113,7 +113,7 @@ class GuildBalancerService
         }
     }
 
-    public function createGuild(array $data): mixed
+    public function createGuild(array $data)
     {    
         try {
             $validator = validator($data, [
@@ -162,7 +162,7 @@ class GuildBalancerService
     }
     
 
-    public function getGuildById($id): array
+    public function getGuildById($id)
     {
         try {
             $class = $this->guildRepository->findGuildById($id);
@@ -189,7 +189,7 @@ class GuildBalancerService
         }
     }
 
-    public function updateGuild($id, array $data): array
+    public function updateGuild($id, array $data)
     {
         try {
             $validator = validator($data, [
@@ -233,7 +233,7 @@ class GuildBalancerService
         }
     }
 
-    public function deleteGuild($id): array
+    public function deleteGuild($id)
     {
         try {
             $guild = $this->guildRepository->findGuildById($id);
@@ -262,7 +262,7 @@ class GuildBalancerService
         }
     }
 
-    public function getPlayersByGuildId($guildId): Collection
+    public function getPlayersByGuildId($guildId)
     {
         try {
             $players = $this->guildRepository->getPlayersByGuildId($guildId);
@@ -280,7 +280,7 @@ class GuildBalancerService
      * @param Guild $guild
      * @return string
      */
-    public function getGuildConfirmationStatus(Guild $guild): string
+    public function getGuildConfirmationStatus(Guild $guild)
     {
         if ($guild->players->isEmpty()) {
             return 'Sem Players';
@@ -298,7 +298,7 @@ class GuildBalancerService
      *
      * @return Collection
      */
-    public function getAllWithConfirmationStatus(): Collection
+    public function getAllWithConfirmationStatus()
     {
         return Guild::with('players')
             ->get()

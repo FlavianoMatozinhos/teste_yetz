@@ -14,17 +14,17 @@ class ClassRepository
         return Classe::all();
     }
 
-    public function create(array $data): Model
+    public function create(array $data)
     {
         return Classe::create($data);
     }
 
-    public function findById($id): Collection
+    public function findById($id)
     {
         return Classe::findOrFail($id);
     }
 
-    public function update($id, array $data): Collection
+    public function update($id, array $data)
     {
         $class = Classe::findOrFail($id);
         $class->update($data);
@@ -38,7 +38,7 @@ class ClassRepository
         $class = Classe::findOrFail($id);
         $class->delete();
     }
-    public function existsByName($name): bool
+    public function existsByName($name)
     {
         $query = Classe::where('name', $name);
 

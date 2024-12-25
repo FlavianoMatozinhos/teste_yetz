@@ -18,7 +18,7 @@ class ClassService
     /**
      * Retorna todas as classes.
      */
-    public function getAllClasses(): array
+    public function getAllClasses()
     {
         try {
             return [
@@ -38,7 +38,7 @@ class ClassService
     /**
      * Cria uma nova classe.
      */
-    public function createClass(array $data): array
+    public function createClass(array $data)
     {    
         try {
             $validator = validator($data, [
@@ -87,7 +87,7 @@ class ClassService
     /**
      * Retorna uma classe pelo ID.
      */
-    public function getClassById($id): array
+    public function getClassById($id)
     {
         try {
             $class = $this->classRepository->findById($id);
@@ -117,7 +117,7 @@ class ClassService
     /**
      * Atualiza uma classe.
      */
-    public function updateClass($id, array $data): array
+    public function updateClass($id, array $data)
     {
         try {
             $validator = validator($data, [
@@ -163,7 +163,7 @@ class ClassService
     /**
      * Deleta uma classe.
      */
-    public function deleteClass($id): array
+    public function deleteClass($id)
     {
         try {
             $this->classRepository->delete($id);

@@ -14,7 +14,7 @@ class GuildRepository
      *
      * @return Collection
      */
-    public function getAllGuilds(): Collection
+    public function getAllGuilds()
     {
         return Guild::all();
     }
@@ -24,7 +24,7 @@ class GuildRepository
      *
      * @return Collection
      */
-    public function getAllWithPlayers(): Collection
+    public function getAllWithPlayers()
     {
         return Guild::with('players')->get();
     }
@@ -34,7 +34,7 @@ class GuildRepository
      *
      * @return Collection
      */
-    public function getAllPlayers(): Collection
+    public function getAllPlayers()
     {
         return User::all();
     }
@@ -44,7 +44,7 @@ class GuildRepository
      *
      * @return int
      */
-    public function countGuilds(): int
+    public function countGuilds()
     {
         return Guild::count();
     }
@@ -55,7 +55,7 @@ class GuildRepository
      * @param array $data
      * @return Guild
      */
-    public function createGuild(array $data): array
+    public function createGuild(array $data)
     {
         DB::beginTransaction();
 
@@ -78,7 +78,7 @@ class GuildRepository
      * @param Guild $guild
      * @return void
      */
-    public function delete($id): void
+    public function delete($id)
     {
         DB::table('users')->where('guild_id', $id)->update(['guild_id' => null]);
         $guild = Guild::findOrFail($id);
@@ -91,13 +91,13 @@ class GuildRepository
      * @param int $id
      * @return Guild
      */
-    public function findGuildById(int $id): ?Guild
+    public function findGuildById(int $id)
     {
         
         return Guild::findOrFail($id);
     }
 
-    protected function validateGuildId($guildId): bool
+    protected function validateGuildId($guildId)
     {
         return Guild::where('id', $guildId)->exists();
     }
@@ -109,14 +109,14 @@ class GuildRepository
         return $class;
     }
 
-    public function existsByName($name): bool
+    public function existsByName($name)
     {
         $query = Guild::where('name', $name);
 
         return $query->exists();
     }
 
-    public function getPlayersByGuildId($guildId): Collection
+    public function getPlayersByGuildId($guildId)
     {
         return User::where('guild_id', $guildId)->with('class')->get();
     }

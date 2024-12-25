@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\LogoutService;
 use Illuminate\Http\Request;
-
+use Exception;
 
 class LogoutController extends Controller
 {
@@ -41,28 +41,39 @@ class LogoutController extends Controller
      *     )
      * )
      */
-    public function logout(Request $request): mixed
+    public function logout(Request $request)
     {
-        $result = $this->logoutService->logoutUser($request->user());
+        try {
+            $result = $this->logoutService->logoutUser($request->user());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $result['message']
+                    ], 500);
+                }
+
+                return redirect()->back()->withErrors(['error' => $result['message']]);
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $result['message']
+                ], 200);
+            }
+
+            return redirect()->route('login')->with('success', $result['message']);
+        } catch (Exception $e) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => $result['message']
+                    'message' => 'Erro ao realizar logout: ' . $e->getMessage()
                 ], 500);
             }
 
-            return redirect()->back()->withErrors(['error' => $result['message']]);
+            return redirect()->route('login')->withErrors(['error' => 'Erro ao realizar logout: ' . $e->getMessage()]);
         }
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => $result['message']
-            ], 200);
-        }
-
-        return redirect()->route('login')->with('success', $result['message']);
     }
 }

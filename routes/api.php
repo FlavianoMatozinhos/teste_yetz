@@ -25,20 +25,20 @@ Route::get('/classes/{id}', [ClassController::class, 'show']);
 Route::put('/classes/{id}', [ClassController::class, 'update']);
 Route::delete('/classes/{id}', [ClassController::class, 'destroy']);
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/players/{id}', [RegisterController::class, 'show'])->name('player.show');
-    Route::get('/players/edit/{id}', [RegisterController::class, 'edit'])->name('player.edit');
-    Route::put('/players/{id}', [RegisterController::class, 'update'])->name('player.update');
-    Route::delete('/players/{id}', [RegisterController::class, 'destroy'])->name('player.destroy');
-    Route::get('/players/confirm/{id}', [RegisterController::class, 'confirm'])->name('player.confirm');
-    Route::get('/players/noconfirm/{id}', [RegisterController::class, 'noconfirm'])->name('player.noconfirm');
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/players/{id}', [RegisterController::class, 'show']);
+    Route::get('/players/edit/{id}', [RegisterController::class, 'edit']);
+    Route::put('/players/{id}', [RegisterController::class, 'update']);
+    Route::delete('/players/{id}', [RegisterController::class, 'destroy']);
+    Route::get('/players/confirm/{id}', [RegisterController::class, 'confirm']);
+    Route::get('/players/noconfirm/{id}', [RegisterController::class, 'noconfirm']);
 
-    Route::get('/guild/create', [GuildController::class, 'index'])->name('guild.create');
-    Route::post('/guild', [GuildController::class, 'store'])->name('guild.store');
-    Route::get('/guild/{id}', [GuildController::class, 'show'])->name('guild.show');
-    Route::get('/guild/edit/{id}', [GuildController::class, 'edit'])->name('guild.edit');
-    Route::put('/guild/{id}', [GuildController::class, 'update'])->name('guild.update');
-    Route::delete('/guild/{id}', [GuildController::class, 'destroy'])->name('guild.destroy');
+    Route::get('/guilds/create', [GuildController::class, 'index']);
+    Route::post('/guilds', [GuildController::class, 'store']);
+    Route::get('/guilds/{id}', [GuildController::class, 'show']);
+    Route::get('/guilds/edit/{id}', [GuildController::class, 'edit']);
+    Route::put('/guilds/{id}', [GuildController::class, 'update']);
+    Route::delete('/guilds/{id}', [GuildController::class, 'destroy']);
 
-    Route::post('/guilds/balance', [GuildController::class, 'balance'])->name('balance');
+    Route::post('/guilds/balance', [GuildController::class, 'balance']);
 });

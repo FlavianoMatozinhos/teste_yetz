@@ -52,7 +52,7 @@ class RegisterService
     /**
      * Registra um novo usuário.
      */
-    public function registerUser(array $data): array
+    public function registerUser(array $data)
     {
         $validator = Validator::make($data, [
             'name' => 'required|string|max:255',
@@ -86,12 +86,12 @@ class RegisterService
         ];
     }
 
-    protected function validateRoleId($roleId): bool
+    protected function validateRoleId($roleId)
     {
         return Role::where('id', $roleId)->exists();
     }
 
-    public function updateUser($id, array $data): array
+    public function updateUser($id, array $data)
     {
         try {
             $validator = Validator::make($data, [
@@ -140,7 +140,7 @@ class RegisterService
         }
     }
 
-    public function deleteUser($id): array
+    public function deleteUser($id)
     {
         try {
             $user = $this->userRepository->findById($id);
@@ -169,7 +169,7 @@ class RegisterService
         }
     }
 
-    public function getPlayerById($id): array
+    public function getPlayerById($id)
     {
         try {
             $class = $this->userRepository->findById($id);
@@ -196,7 +196,7 @@ class RegisterService
         }
     }
 
-    public function getPlayerByIdAndConfirm($id): array 
+    public function getPlayerByIdAndConfirm($id)
     {
         try {
             $confirm = $this->userRepository->findByIdAndConfirm($id);
@@ -223,7 +223,7 @@ class RegisterService
         }
     }
 
-    public function getPlayerByIdAndNoConfirm($id): array 
+    public function getPlayerByIdAndNoConfirm($id)
     {
         try {
             $confirm = $this->userRepository->findByIdAndNoConfirm($id);
@@ -255,7 +255,7 @@ class RegisterService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getAllWithConfirmationStatus(): Collection
+    public function getAllWithConfirmationStatus()
     {
         return $this->userRepository->getAllPlayers()->map(function ($player) {
             $player->confirmed = $player->confirmed ? 'Sim' : 'Não';

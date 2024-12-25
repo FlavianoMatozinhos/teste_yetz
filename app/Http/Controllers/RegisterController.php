@@ -8,6 +8,7 @@ use App\Services\GuildBalancerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Exception;
 
 class RegisterController extends Controller
 {
@@ -22,138 +23,110 @@ class RegisterController extends Controller
         $this->guildService = $guildService;
     }
 
-    /**
-     * @OA\Get(
-     *     path="/register",
-     *     summary="Exibe a página de registro com classes e jogadores disponíveis.",
-     *     tags={"Register"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Dados de classes e jogadores disponíveis.",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="classes", type="array", @OA\Items(type="string")),
-     *                 @OA\Property(property="players", type="array", @OA\Items(type="string"))
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $players = $this->registerService->getAllPlayers();
-        $classesResult = $this->registerService->getAllClasses();
+        try {
+            $players = $this->registerService->getAllPlayers();
+            $classesResult = $this->registerService->getAllClasses();
+            $classes = $classesResult['data'];
 
-        $classes = $classesResult['data'];
-    
-        if ($request->expectsJson()) {
-            return response()->json($players, 200);
+            if ($request->expectsJson()) {
+                return response()->json($players, 200);
+            }
+
+            return view('auth.register', compact('classes', 'players'));
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao carregar dados de registro: ' . $e->getMessage()
+            ], 500);
         }
-
-        return view('auth.register', compact('classes', 'players'));
     }
 
-    /**
-     * @OA\Post(
-     *     path="/register",
-     *     summary="Armazena um novo usuário no banco de dados.",
-     *     tags={"Register"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *             @OA\Property(property="password", type="string", example="password123"),
-     *             @OA\Property(property="class", type="string", example="Warrior")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Registro realizado com sucesso.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Registro realizado com sucesso! Agora você pode fazer login.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Erro na validação dos dados.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"))
-     *         )
-     *     )
-     * )
-     */
-    public function store(Request $request): View|RedirectResponse
+    public function store(Request $request)
     {
-        $result = $this->registerService->registerUser($request->all());
+        try {
+            $result = $this->registerService->registerUser($request->all());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'errors' => $result['errors']
+                    ], 400);
+                }
+
+                return redirect()->back()->withErrors($result['errors']);
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Registro realizado com sucesso! Agora você pode fazer login.'
+                ], 201);
+            }
+
+            return redirect('/login')->with('success', 'Registro realizado com sucesso! Faça login para continuar.');
+        } catch (Exception $e) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'errors' => $result['errors']
-                ], 400);
+                    'message' => 'Erro ao realizar o registro: ' . $e->getMessage()
+                ], 500);
             }
 
-            return redirect()->back()->withErrors($result['errors']);
+            return redirect()->back()->withErrors(['general' => 'Erro ao realizar o registro.']);
         }
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Registro realizado com sucesso! Agora você pode fazer login.'
-            ], 201);
-        }
-
-        return redirect('/login')->with('success', 'Registro realizado com sucesso! Faça login para continuar.');
     }
 
-    public function show($id): View
+    public function show($id)
     {
-        $result = $this->registerService->getPlayerById($id);
+        try {
+            $result = $this->registerService->getPlayerById($id);
 
-        if ($result['status'] === 'error') {
-            return response()->json(
-                [
+            if ($result['status'] === 'error') {
+                return response()->json([
                     'message' => $result['message'],
                     'status_code' => $result['status_code'],
                     'error' => $result['error'] ?? null,
-                ],
-                $result['status_code']
-            );
+                ], $result['status_code']);
+            }
+
+            $player = $result['data'];
+            return view('player.show', compact('player'));
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao carregar os dados do jogador: ' . $e->getMessage()
+            ], 500);
         }
-
-        $player = $result['data'];
-
-        return view('player.show', compact('player'));
     }
 
-    public function edit($id): View
+    public function edit($id)
     {
-        $playerResult = $this->registerService->getPlayerById($id);
-        $player = $playerResult['data'];
+        try {
+            $playerResult = $this->registerService->getPlayerById($id);
+            $player = $playerResult['data'];
     
-        $classesResult = $this->registerService->getAllClasses();
-        $classes = $classesResult['data'];
+            $classesResult = $this->registerService->getAllClasses();
+            $classes = $classesResult['data'];
     
-        return view('player.update', [
-            'player' => $player,
-            'classes' => $classes,
-        ]);
+            return view('player.update', [
+                'player' => $player,
+                'classes' => $classes,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao carregar a página de edição: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function confirm($id): RedirectResponse
+    public function confirm($id)
     {
         try {
             $this->registerService->getPlayerByIdAndConfirm($id);
-
             return redirect()->back()->with('success', 'Confirmado para batalhar!');
         } catch (Exception $e) {
             session()->flash('error', 'Erro ao confirmar: ' . $e->getMessage());
@@ -161,124 +134,69 @@ class RegisterController extends Controller
         }
     }
 
-    public function noconfirm($id): RedirectResponse
+    public function noconfirm($id)
     {
         try {
             $this->registerService->getPlayerByIdAndNoConfirm($id);
-
             return redirect()->back()->with('success', 'Se retirou da batalha!');
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao retirar confirmacao: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', 'Houve um erro ao retirar confirmacao da batalha. Por favor, tente novamente.');
+            session()->flash('error', 'Erro ao retirar confirmação: ' . $e->getMessage());
+            return redirect()->route('home')->with('error', 'Houve um erro ao retirar confirmação da batalha. Por favor, tente novamente.');
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/register/{id}",
-     *     summary="Atualiza os dados de um usuário existente.",
-     *     tags={"Register"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID do usuário.",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="name", type="string", example="Jane Doe"),
-     *             @OA\Property(property="email", type="string", example="jane.doe@example.com")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Usuário atualizado com sucesso.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Usuário atualizado com sucesso.")
-     *         )
-     *     )
-     * )
-     */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
-        $data = $request->except(['_token', '_method']);
+        try {
+            $data = $request->except(['_token', '_method']);
+            $result = $this->registerService->updateUser($id, $data);
 
-        $result = $this->registerService->updateUser($id, $data);
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'errors' => $result['errors'] ?? $result['data']
+                    ], $result['status_code']);
+                }
 
-        if ($result['status'] === 'error') {
+                return redirect()->back()->with('error', $result['message']);
+            }
+
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status' => 'error',
-                    'errors' => $result['errors'] ?? $result['data']
+                    'status' => 'success',
+                    'message' => $result['data']['message']
                 ], $result['status_code']);
             }
 
-            return redirect()->back()->with('error', $result['message']);
-        }
-
-        if ($request->expectsJson()) {
+            return redirect()->back()->with('success', $result['data']['message']);
+        } catch (Exception $e) {
             return response()->json([
-                'status' => 'success',
-                'message' => $result['data']['message']
-            ], $result['status_code']);
+                'status' => 'error',
+                'message' => 'Erro ao atualizar o usuário: ' . $e->getMessage()
+            ], 500);
         }
-
-        return redirect()->back()->with('success', $result['data']['message']);
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/register/{id}",
-     *     summary="Remove um usuário.",
-     *     tags={"Register"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID do usuário.",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Usuário removido com sucesso.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Usuário removido com sucesso.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Erro ao remover usuário.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Erro ao remover usuário.")
-     *         )
-     *     )
-     * )
-     */
-    public function destroy($id): mixed
+    public function destroy($id)
     {
-        $result = $this->registerService->deleteUser($id);
+        try {
+            $result = $this->registerService->deleteUser($id);
 
-        if ($result['status'] === 'error') {
-            return response()->json(
-                [
+            if ($result['status'] === 'error') {
+                return response()->json([
                     'message' => $result['message'],
                     'error' => $result['error'] ?? null,
                     'status_code' => $result['status_code'],
-                ],
-                $result['status_code']
-            );
+                ], $result['status_code']);
+            }
+
+            return redirect()->back()->with('success', $result['data']['message']);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao remover o usuário: ' . $e->getMessage()
+            ], 500);
         }
-
-        return redirect()->back()->with('success', $result['data']['message']);
     }
-
 }

@@ -20,7 +20,7 @@ class LoginService
     /**
      * Realiza o login do usuário.
      */
-    public function login(array $credentials): array
+    public function login(array $credentials)
     {
         try {
             $validator = validator($credentials, [

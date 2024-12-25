@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\LoginService;
 use Illuminate\Http\Request;
-
+use Exception;
 
 class LoginController extends Controller
 {
@@ -64,33 +64,43 @@ class LoginController extends Controller
      *     )
      * )
      */
-    public function store(Request $request): mixed
+    public function store(Request $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:6',
-        ]);
+        try {
+            $validated = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|string|min:6',
+            ]);
 
-        $result = $this->loginService->login($request->all());
+            $result = $this->loginService->login($request->all());
 
-        if ($result['status'] === 'error') {
+            if ($result['status'] === 'error') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $result['message']
+                    ], 401);
+                }
+
+                return redirect()->back()->withErrors(['error' => $result['message']]);
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'token' => $result['token']
+                ], 200);
+            }
+            return redirect('/')->with('success', 'Login realizado com sucesso.');
+        } catch (Exception $e) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => $result['message']
-                ], 401);
+                    'message' => 'Erro ao processar login: ' . $e->getMessage()
+                ], 500);
             }
 
-            return redirect()->back()->withErrors(['error' => $result['message']]);
+            return redirect()->back()->withErrors(['error' => 'Erro ao processar login: ' . $e->getMessage()]);
         }
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'token' => $result['token']
-            ], 200);
-        }
-
-        return redirect('/')->with('success', 'Login realizado com sucesso.');
     }
 }

@@ -17,7 +17,7 @@ class LogoutService
     /**
      * Realiza o logout do usuário.
      */
-    public function logoutUser($user): array
+    public function logoutUser($user)
     {
         try {
             $this->tokenRepository->revokeTokens($user);

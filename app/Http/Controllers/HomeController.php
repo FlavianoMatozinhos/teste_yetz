@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\GuildBalancerService;
 use App\Services\RegisterService;
+use Exception;
 
 /**
  * @OA\Info(title="API Home", version="1.0.0")
@@ -33,17 +34,24 @@ class HomeController extends Controller
         $this->guildBalancerService = $guildBalancerService;
     }
 
-    public function index(): mixed
+    public function index()
     {
-        $guilds = $this->guildBalancerService->getAllWithConfirmationStatus();
-        $players = $this->registerService->getAllWithConfirmationStatus();
+        try {
+            $guilds = $this->guildBalancerService->getAllWithConfirmationStatus();
+            $players = $this->registerService->getAllWithConfirmationStatus();
 
-        $data = [
-            'message' => 'Bem-vindo à Home!',
-            'guilds' => $guilds,
-            'players' => $players,
-        ];
+            $data = [
+                'message' => 'Bem-vindo à Home!',
+                'guilds' => $guilds,
+                'players' => $players,
+            ];
 
-        return view('home', $data);
+            return view('home', $data);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao carregar as informações da Home: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

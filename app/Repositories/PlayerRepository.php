@@ -30,7 +30,7 @@ class PlayerRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getConfirmedPlayers(): Collection
+    public function getConfirmedPlayers()
     {
         return $this->model->where('confirmed', true)->get();
     }
@@ -41,7 +41,7 @@ class PlayerRepository
      * @param int $classId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getPlayersByClass($classId): Collection
+    public function getPlayersByClass($classId)
     {
         return $this->model->where('class_id', $classId)->get();
     }
@@ -51,7 +51,7 @@ class PlayerRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAllPlayers(): Collection
+    public function getAllPlayers()
     {
         return $this->model->all();
     }
@@ -61,7 +61,7 @@ class PlayerRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getPlayersByXP(): Collection
+    public function getPlayersByXP()
     {
         return $this->model->orderBy('xp', 'desc')->get();
     }
@@ -72,8 +72,8 @@ class PlayerRepository
      * @param array $data
      * @return array
      */
-    public function createPlayer(array $data): array
-    {
+    public function createPlayer(array $data)
+    {   
         DB::beginTransaction();
 
         try {
@@ -104,7 +104,7 @@ class PlayerRepository
      * @param string $email
      * @return User|null
      */
-    public function findByEmail($email): Model
+    public function findByEmail($email)
     {
         return $this->model->where('email', $email)->first();
     }
@@ -115,7 +115,7 @@ class PlayerRepository
      * @param int $id
      * @return User|null
      */
-    public function findById($id): Model
+    public function findById($id)
     {
         return $this->model->find($id);
     }
@@ -127,7 +127,7 @@ class PlayerRepository
      * @param array $data
      * @return bool
      */
-    public function updatePlayer($id, array $data): bool
+    public function updatePlayer($id, array $data)
     {
         unset($data['password_confirmation']);
 
@@ -140,13 +140,13 @@ class PlayerRepository
      * @param int $id
      * @return bool
      */
-    public function deletePlayer($id): bool|null
+    public function deletePlayer($id)
     {
         DB::table('guilds')->where('user_id', $id)->update(['user_id' => null]);
         return $this->model->where('id', $id)->delete();
     }
 
-    public function getGuildByPlayerId($id): array
+    public function getGuildByPlayerId($id)
     {
         $player = $this->model->with('guild')->find($id);
         
@@ -163,12 +163,12 @@ class PlayerRepository
         ];
     }
 
-    public function findByIdAndConfirm($id): bool
+    public function findByIdAndConfirm($id)
     {
         return $this->model->where('id', $id)->update(['confirmed' => true]);
     }
 
-    public function findByIdAndNoConfirm($id): bool
+    public function findByIdAndNoConfirm($id)
     {
         return $this->model->where('id', $id)->update(['confirmed' => false]);
     }
