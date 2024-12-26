@@ -5,6 +5,12 @@
 - Permite registrar, visualizar, atualizar e excluir informações de players, além de controlar os Guildas e quais players terao acesso.
 
 
+
+## SITE PARA ACESSO
+- http://15.228.82.7/
+
+
+
 ## OBS
 - Existe *ROLE* para mestre e player.
 - Player: So pode visualizar qual Guilda esta e Editar o seu usuario
