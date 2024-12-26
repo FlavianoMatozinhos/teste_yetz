@@ -1,4 +1,4 @@
-# Gestão de Usuários e Despesas
+# MAGICO DE YETZ - Organizador de MMORPG
 
 ## DESCRIÇÃO
 - Este sistema foi desenvolvido para gerenciar players e Guildas de forma eficiente e organizada. 
