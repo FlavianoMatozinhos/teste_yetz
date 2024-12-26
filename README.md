@@ -134,7 +134,7 @@ OBS(Irá aparecer a opção de criar migrations, digitar YES /  Irá aparecer a 
 
 
 
-- Caso não tenha usuario cadastro, ir através da barra de navegação e clicar em Register, e assim que criar o usuario, será redirecionado para a tela de login.
+- Caso não tenha usuario cadastrado, ir através da barra de navegação e clicar em Criar conta, e assim que criar o usuario, será redirecionado para a tela de login.
 
 
 
@@ -142,12 +142,11 @@ OBS(Irá aparecer a opção de criar migrations, digitar YES /  Irá aparecer a 
 
 
 
-- Na tela de home você terá acesso ao gerenciador dos players e guildas.
-
 
 ## MESTRE
 
--Tela de Home
+- Tela de Home
+
 
 
 - Clicando em Criar Guilda na tela de HOME, você terá acesso para cadastrar Guildas ao seu sistema.
@@ -166,7 +165,7 @@ OBS(Irá aparecer a opção de criar migrations, digitar YES /  Irá aparecer a 
 
 
 
-- Clicando em Visualizar uma player na tela de HOME, sera redirecionado para a tela do Player e com suas respectivas informacoes.
+- Clicando em Visualizar um player na tela de HOME, sera redirecionado para a tela do Player e com suas respectivas informacoes.
 
 
 
