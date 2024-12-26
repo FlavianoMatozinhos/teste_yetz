@@ -9,6 +9,7 @@ use App\Repositories\PlayerRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class RegisterService
 {
@@ -101,12 +102,20 @@ class RegisterService
                 'xp' => 'nullable|numeric',
                 'class_id' => 'sometimes|exists:classes,id',
             ]);
-
+            
             if ($validator->fails()) {
                 return [
                     'status' => 'error',
-                    'errors' => $validator->errors(),
-                    'status_code' => 400,
+                    'message' => $validator->errors()->first(),
+                    'status_code' => 422
+                ];
+            }
+            
+            if (empty($data['name'])) {
+                return [
+                    'status' => 'error',
+                    'message' => 'O nome da Guilda não pode estar vazio.',
+                    'status_code' => 422
                 ];
             }
 

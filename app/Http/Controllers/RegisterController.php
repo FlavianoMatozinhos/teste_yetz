@@ -155,7 +155,7 @@ class RegisterController extends Controller
                 if ($request->expectsJson()) {
                     return response()->json([
                         'status' => 'error',
-                        'errors' => $result['errors'] ?? $result['data']
+                        'message' => $result['data']['message']
                     ], $result['status_code']);
                 }
 

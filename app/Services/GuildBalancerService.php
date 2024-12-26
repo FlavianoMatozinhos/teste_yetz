@@ -43,7 +43,7 @@ class GuildBalancerService
 
                 $guildPlayerCounts[$guildIndex]++;
 
-                $playerAllocations[] = ['player_id' => $player->id, 'guild_id' => $guild->id];
+                $playerAllocations[] = ['user_id' => $player->id, 'guild_id' => $guild->id];
             }
 
             $missingClassesWarning = false;
@@ -93,7 +93,7 @@ class GuildBalancerService
 
             foreach ($playerAllocations as $allocation) {
                 if ($allocation['guild_id'] == $guild->id) {
-                    $player = User::find($allocation['player_id']);
+                    $player = User::find($allocation['user_id']);
                     if ($player->class == 'Clérigo') {
                         $clericCount++;
                     } elseif ($player->class == 'Guerreiro') {
