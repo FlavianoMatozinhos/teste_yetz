@@ -77,7 +77,7 @@
                             <td>{{ $player->guild ? $player->guild->name : 'Sem Guilda' }}</td>
                             <td>{{ $player->confirmed }}</td>
                             <td>
-                                @if (Auth::user()->confirmed === 0)
+                                @if ($player->confirmed == "Não")
                                     <a href="{{ route('player.confirm', $player->id) }}" class="btn btn-sm btn-success">Confirmar</a>
                                 @else
                                     <a href="{{ route('player.noconfirm', $player->id) }}" class="btn btn-sm btn-warning">Não confirmar</a>
