@@ -422,6 +422,41 @@
                 }
             }
         },
+        "/guilds/edit/{id}": {
+            "get": {
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Exibir formulário de edição de uma guilda específica",
+                "operationId": "a783f45025558c78e825ee7d5b921c68",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da guilda",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Formulário de edição exibido com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Guild"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Guilda não encontrada"
+                    }
+                }
+            }
+        },
         "/": {
             "get": {
                 "tags": [
@@ -585,35 +620,14 @@
                 "tags": [
                     "Register"
                 ],
-                "summary": "Exibe a página de registro com classes e jogadores disponíveis.",
+                "summary": "Exibe os dados de registro de jogadores",
                 "operationId": "20acbbb20f7fce1bdbbc677c9dffd8f2",
                 "responses": {
                     "200": {
-                        "description": "Dados de classes e jogadores disponíveis.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "classes": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "players": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Retorna dados de jogadores e classes"
+                    },
+                    "500": {
+                        "description": "Erro ao carregar dados de registro"
                     }
                 }
             },
@@ -621,29 +635,30 @@
                 "tags": [
                     "Register"
                 ],
-                "summary": "Armazena um novo usuário no banco de dados.",
+                "summary": "Registra um novo jogador",
                 "operationId": "4ae83e03d934d074c11bcd82575c8c2a",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "class_id"
+                                ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "John Doe"
+                                        "example": "JogadorExemplo"
                                     },
                                     "email": {
                                         "type": "string",
-                                        "example": "john.doe@example.com"
+                                        "example": "jogador@example.com"
                                     },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "password123"
-                                    },
-                                    "class": {
-                                        "type": "string",
-                                        "example": "Warrior"
+                                    "class_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -653,65 +668,63 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Registro realizado com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Registro realizado com sucesso! Agora você pode fazer login."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Registro realizado com sucesso"
                     },
                     "400": {
-                        "description": "Erro na validação dos dados.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Erro de validação"
+                    },
+                    "500": {
+                        "description": "Erro ao registrar jogador"
                     }
                 }
             }
         },
-        "/register/{id}": {
-            "put": {
+        "/players/{id}": {
+            "get": {
                 "tags": [
                     "Register"
                 ],
-                "summary": "Atualiza os dados de um usuário existente.",
-                "operationId": "a92870cdd3345869a5d8b58f180b358c",
+                "summary": "Exibe detalhes do jogador",
+                "operationId": "01039c7722eff8d71b986944f1f21d46",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID do usuário.",
+                        "description": "ID do jogador",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna detalhes do jogador"
+                    },
+                    "404": {
+                        "description": "Jogador não encontrado"
+                    },
+                    "500": {
+                        "description": "Erro ao carregar detalhes do jogador"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Atualiza os dados do jogador",
+                "operationId": "3bdf91268f9dbe755e1bcd5691476f31",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do jogador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
                         }
                     }
                 ],
@@ -720,14 +733,23 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "class_id"
+                                ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Jane Doe"
+                                        "example": "JogadorAtualizado"
                                     },
                                     "email": {
                                         "type": "string",
-                                        "example": "jane.doe@example.com"
+                                        "example": "jogadoratualizado@example.com"
+                                    },
+                                    "class_id": {
+                                        "type": "integer",
+                                        "example": 2
                                     }
                                 },
                                 "type": "object"
@@ -737,24 +759,13 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Usuário atualizado com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Usuário atualizado com sucesso."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Jogador atualizado com sucesso"
+                    },
+                    "400": {
+                        "description": "Erro de validação"
+                    },
+                    "500": {
+                        "description": "Erro ao atualizar jogador"
                     }
                 }
             },
@@ -762,13 +773,46 @@
                 "tags": [
                     "Register"
                 ],
-                "summary": "Remove um usuário.",
-                "operationId": "b12e588fff1852fa664cc8e2088bb41b",
+                "summary": "Remove um jogador",
+                "operationId": "dc0649a77ac0d9f9f381c0224c508f47",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID do usuário.",
+                        "description": "ID do jogador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Jogador removido com sucesso"
+                    },
+                    "404": {
+                        "description": "Jogador não encontrado"
+                    },
+                    "500": {
+                        "description": "Erro ao remover jogador"
+                    }
+                }
+            }
+        },
+        "/players/edit/{id}": {
+            "get": {
+                "tags": [
+                    "Player"
+                ],
+                "summary": "Editar jogador",
+                "description": "Carrega a página de edição de um jogador, incluindo as classes disponíveis",
+                "operationId": "d65ae373e3cede151a23fd074bbea20f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do jogador a ser editado",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -777,44 +821,68 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Usuário removido com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Usuário removido com sucesso."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Página de edição carregada com sucesso"
                     },
-                    "400": {
-                        "description": "Erro ao remover usuário.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Erro ao remover usuário."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
+                    "500": {
+                        "description": "Erro ao carregar a página de edição"
+                    }
+                }
+            }
+        },
+        "/players/confirm/{id}": {
+            "get": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Confirma a participação do jogador em batalha",
+                "operationId": "a96aad8f117d9746f67f4ed52c652480",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do jogador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Jogador confirmado para batalhar"
+                    },
+                    "500": {
+                        "description": "Erro ao confirmar jogador"
+                    }
+                }
+            }
+        },
+        "/players/noconfirm/{id}": {
+            "get": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Remove a confirmação do jogador para batalha",
+                "operationId": "0f2c49abdd376f377303b65df64aeed2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do jogador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Jogador retirado da batalha"
+                    },
+                    "500": {
+                        "description": "Erro ao retirar confirmação"
                     }
                 }
             }
@@ -853,6 +921,10 @@
     },
     "tags": [
         {
+            "name": "Register",
+            "description": "Gerenciamento de registro de jogadores"
+        },
+        {
             "name": "Classes",
             "description": "Classes"
         },
@@ -873,8 +945,8 @@
             "description": "Logout"
         },
         {
-            "name": "Register",
-            "description": "Register"
+            "name": "Player",
+            "description": "Player"
         }
     ]
 }
