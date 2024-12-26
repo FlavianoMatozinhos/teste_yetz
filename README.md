@@ -131,114 +131,142 @@ OBS(Irá aparecer a opção de criar migrations, digitar YES /  Irá aparecer a 
 
 ## USO
 - Acessando a tela principal, você será redirecionado para a tela de Login, basta informar email e senha.
+![login](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/login.PNG?raw=true)
 
 
 
-- Caso não tenha usuario cadastrado, ir através da barra de navegação e clicar em Criar conta, e assim que criar o usuario, será redirecionado para a tela de login.
+- Caso não tenha usuario cadastro, ir através da barra de navegação e clicar em Register, e assim que criar o usuario, será redirecionado para a tela de login.
+![register](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/cadastro.PNG?raw=true)
 
 
 
 - Após feito login, será redirecionado para a pagina de Home, que só é acessivel através do Login.
 
 
-
-
 ## MESTRE
 
-- Tela de Home
+-Tela de Home
+![home_mestre](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Home.PNG?raw=true)
 
 
 
 - Clicando em Criar Guilda na tela de HOME, você terá acesso para cadastrar Guildas ao seu sistema.
+![mestre_criar_guilda_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Criar_Guilda.PNG?raw=true)
 
 
 
 - Tela de Cadastro da Guilda, sendo obrigatorios o nome, minimo e maximo de players.
+![mestre_criar_guilda](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Criar_Guilda%202.PNG?raw=true)
 
 
 
 - Clicando em Balancear Guildas na tela de HOME, o sistema ira balancear os Players que estao confirmados para participar atraves do seu XP.
+![mestre_balancear](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Balancear_Guilda.PNG?raw=true)
 
 
 
 - Clicando em Excluir um player na tela de HOME, aparecerá um alerta perguntando se deseja mesmo fazer essa exclusão.
+![mestre_excluir_player_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Excluir_Player_1.PNG?raw=true)
+![mestre_excluir_player_alert]()
 
 
 
-- Clicando em Visualizar um player na tela de HOME, sera redirecionado para a tela do Player e com suas respectivas informacoes.
+- Clicando em Visualizar uma player na tela de HOME, sera redirecionado para a tela do Player e com suas respectivas informacoes.
+![mestre_player_view]()
 
 
 
 - Tela de Visualizacao do Player
+![mestre_player]()
 
 
 
 - Dentro da Tela de Visualizacao do Player e possivel Editar as informacoes do jogador
+![mestre_player_edit_view]()
 
 
 
 - Tela de Editar o Player
+![mestre_player_edit]()
 
 
 
 - Clicando em Excluir um Guilda na tela de HOME, aparecerá um alerta perguntando se deseja mesmo fazer essa exclusão.
+![mestre_excluir_guilda_view]()
+![mestre_excluir_guilda_alert]()
 
 
 
 - Clicando em Visualizar uma Guilda na tela de HOME, sera redirecionado para a tela da Guilda e com suas respectivas informacoes.
+![mestre_guilda_view]()
 
 
 
 - Tela de Visualizacao da Guilda
+![mestre_guilda]()
 
 
 
 - Clicando em Editar uma Guilda na tela de HOME, sera redirecionado para a tela de Editar Guilda.
+![mestre_guilda_edit_view]()
 
 
 
 - Tela de Editar Guilda
+![mestre_guilda_edit]()
 
 
 ## Player
 
 - Tela de Home
+![home_player]()
 
 
 
 - Clicando em Visualizar na tabela de Guildas
+![player_guilda_view]()
 
 
 
 - Tela de Visulizar Guilda, e possivel visualizar todos os jogadores que estao nesta guilda e suas respectivas classes
+![player_guilda]()
 
 
 
 -  Clicando em Visualizar na tabela de Players
+![player_player_view]()
 
 
 
 - Tela de Visulizar Player, e possivel Visualizar o seu perfil
+![player_player]()
 
 
 
 - Tela de Visulizar Player, e possivel Editar o seu perfil, clicando em *Editar Jogador*
+![player_player_edit_view]()
 
 
 
 - Tela de Editar Player
+![player_player_edit]()
 
 
 
 - Dentro da *Tela de Home*, na tabela de *Players*, e possivel confirmar se voce quer entrar em uma Guilda ou Nao.
+![player_player_confirm]()
 
 
 
 - Dentro da *Tela de Home*, na tabela de *Players*, caso ja esteja confirmado, tambem e possivel retirar essa confirmacao.
-  
+  ![player_player_retirar_confirm]()
+
 
 
 - Para fazer Logout, basta clicar na barra de navegação "Logout"
+![logout]()
+
+
 
 
 ## CURLS da API

@@ -89,7 +89,7 @@
                                     <form action="{{ route('player.destroy', $player->id) }}" method="POST" style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta guilda?')">Excluir</button>
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este player?')">Excluir</button>
                                     </form>
                                 @endif
                             </td>
