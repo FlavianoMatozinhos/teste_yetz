@@ -73,7 +73,7 @@ class LoginController extends Controller
             ]);
 
             $result = $this->loginService->login($request->all());
-            dd($result);
+
             if ($result['status'] === 'error') {
                 if ($request->expectsJson()) {
                     return response()->json([
