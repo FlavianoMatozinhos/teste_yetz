@@ -11,11 +11,23 @@
 - Mestre: Pode visualizar, editar, excluir e balancear Guildas e pode visualizar, editar, excluir Players.
 
 
+## Usuarios
+- MESTRE
+    ```
+        LOGIN: admin@admin.com
+        SENHA: 12345678
+    ```
+- PLAYER
+    ```
+        LOGIN: player@player.com
+        SENHA: 12345678
+    ```
+
 ## INSTALAÇÃO
 
 ### Pré-requisitos
 Certifique-se de ter as seguintes ferramentas instaladas em seu sistema:
-- PHP ^8.1
+- PHP ^8.2
 - Composer
 
 ### Passo a Passo
@@ -167,105 +179,104 @@ OBS(Irá aparecer a opção de criar migrations, digitar YES /  Irá aparecer a 
 
 - Clicando em Excluir um player na tela de HOME, aparecerá um alerta perguntando se deseja mesmo fazer essa exclusão.
 ![mestre_excluir_player_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Excluir_Player_1.PNG?raw=true)
-![mestre_excluir_player_alert]()
+![mestre_excluir_player_alert](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Excluir_Player_2.PNG?raw=true)
 
 
 
-- Clicando em Visualizar uma player na tela de HOME, sera redirecionado para a tela do Player e com suas respectivas informacoes.
-![mestre_player_view]()
+- Clicando em Visualizar um player na tela de HOME, sera redirecionado para a tela do Player e com suas respectivas informacoes.
+![mestre_player_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Excluir_Player_1.PNG?raw=true)
 
 
 
 - Tela de Visualizacao do Player
-![mestre_player]()
+![mestre_player](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_player_2.PNG?raw=true)
 
 
 
 - Dentro da Tela de Visualizacao do Player e possivel Editar as informacoes do jogador
-![mestre_player_edit_view]()
+![mestre_player_edit_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_player_2.PNG?raw=true)
 
 
 
 - Tela de Editar o Player
-![mestre_player_edit]()
+![mestre_player_edit](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Editar_player.PNG?raw=true)
 
 
 
 - Clicando em Excluir um Guilda na tela de HOME, aparecerá um alerta perguntando se deseja mesmo fazer essa exclusão.
-![mestre_excluir_guilda_view]()
-![mestre_excluir_guilda_alert]()
+![mestre_excluir_guilda_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Guilda.PNG?raw=true)
+![mestre_excluir_guilda_alert](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Excluir_Guilda_1.PNG?raw=true)
 
 
 
 - Clicando em Visualizar uma Guilda na tela de HOME, sera redirecionado para a tela da Guilda e com suas respectivas informacoes.
-![mestre_guilda_view]()
+![mestre_guilda_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Guilda.PNG?raw=true)
 
 
 
 - Tela de Visualizacao da Guilda
-![mestre_guilda]()
+![mestre_guilda](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_Guilda_1.PNG?raw=true)
 
 
 
 - Clicando em Editar uma Guilda na tela de HOME, sera redirecionado para a tela de Editar Guilda.
-![mestre_guilda_edit_view]()
+![mestre_guilda_edit_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Guilda.PNG?raw=true)
 
 
 
 - Tela de Editar Guilda
-![mestre_guilda_edit]()
+![mestre_guilda_edit](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Editar_Guilda.PNG?raw=true)
 
 
 ## Player
 
 - Tela de Home
-![home_player]()
+![home_player](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Player.PNG?raw=true)
 
 
 
 - Clicando em Visualizar na tabela de Guildas
-![player_guilda_view]()
+![player_guilda_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_Guilda_2_Player.PNG?raw=true)
 
 
 
 - Tela de Visulizar Guilda, e possivel visualizar todos os jogadores que estao nesta guilda e suas respectivas classes
-![player_guilda]()
+![player_guilda](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_Guilda_1.PNG?raw=true)
 
 
 
 -  Clicando em Visualizar na tabela de Players
-![player_player_view]()
+![player_player_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_player_1_player.PNG?raw=true)
 
 
 
 - Tela de Visulizar Player, e possivel Visualizar o seu perfil
-![player_player]()
+![player_player](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_player_1_player.PNG?raw=true)
 
 
 
 - Tela de Visulizar Player, e possivel Editar o seu perfil, clicando em *Editar Jogador*
-![player_player_edit_view]()
+![player_player_edit_view](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Visualizar_player_2.PNG?raw=true)
 
 
 
 - Tela de Editar Player
-![player_player_edit]()
+![player_player_edit](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Editar_player.PNG?raw=true)
 
 
 
 - Dentro da *Tela de Home*, na tabela de *Players*, e possivel confirmar se voce quer entrar em uma Guilda ou Nao.
-![player_player_confirm]()
+![player_player_confirm](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Nao_Confirmado_player.PNG?raw=true)
 
 
 
 - Dentro da *Tela de Home*, na tabela de *Players*, caso ja esteja confirmado, tambem e possivel retirar essa confirmacao.
-  ![player_player_retirar_confirm]()
+  ![player_player_retirar_confirm](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Confirmar_player.PNG?raw=true)
 
 
 
 - Para fazer Logout, basta clicar na barra de navegação "Logout"
-![logout]()
-
+![logout](https://github.com/FlavianoMatozinhos/teste_yetz/blob/main/public/img/Logout.PNG?raw=true)
 
 
 
